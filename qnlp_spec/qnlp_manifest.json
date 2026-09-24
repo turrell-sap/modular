@@ -1,0 +1,2028 @@
+{
+  "version": "1.2.0",
+  "reading_note": "This file is longer than one Read page (conflicts 36-42, numeric_reference, procedures fall on the second page); read it whole or query sections with jq, e.g. jq '.conflicts' qnlp_manifest.json. 1.1.0: navigation fixes (tensordot store, 8.1a HVX route, relative-clause line map, E[D] at q_n = 2, export offsets, RDM/entropy procedure, LIM-id resolution, conflicts 41-42). 1.2.0: registry update -- puremath (qnlp_pure_mathematics.md) and dsdm (qnlp_dsdm_delivery_plan.md) registered with SHA-256 in documents[]; precedence rule R14; UNVERIFIED groups P (puremath App. B) and Q (dsdm planning assumptions); gap G31; forthcoming{} now records the registration.",
+  "generated_for": "QNLP document set (pregroup/DisCoCat -> tensor contractions or parameterised circuits; DisCoCirc for text) implemented in C/C++/Mojo as classical simulation on CUDA and Qualcomm Hexagon/Adreno; bridging manifest for software agents; companion to qnlp_bridge_for_agents.md; generated 2026-09-24",
+  "scratchpad_dir": "/tmp/claude-0/-home-user-modular/58690423-9136-5dc0-b3e6-6a28285a6c82/scratchpad",
+  "line_reference_notation": {
+    "sNNN": "spec line",
+    "aNNN": "addendum line (1928-line version)",
+    "cNNN": "companion line (1082-line version)",
+    "review/limits/errata": "lines as on disk"
+  },
+  "documents": [
+    {
+      "key": "spec",
+      "path": "/tmp/claude-0/-home-user-modular/58690423-9136-5dc0-b3e6-6a28285a6c82/scratchpad/qnlp_first_principles_spec.md",
+      "role": "baseline first-principles specification, Sections 0-10, conventions C1-C13, equations (0.n)-(5.n), tests T1-T10",
+      "status": "frozen",
+      "sha256": "7408d5b7fba156b29bd5e5b88f03f4fbb1f480ed95e48d834c41691f68efe86c",
+      "lines": 1314,
+      "bytes": 105999,
+      "authoritative_for": [
+        "kernel conventions C1-C13",
+        "six-shape grammar and greedy pre-check",
+        "fused tensordot",
+        "bent-wire circuit form and wire-map table",
+        "readout",
+        "simulation kernel",
+        "hardware mapping facts as UNVERIFIED-tagged",
+        "number formats and error bounds (as corrected by errata)",
+        "learning rules",
+        "export format v1",
+        "memory budget (as corrected)",
+        "worked example Sec. 8",
+        "tests T1-T10"
+      ],
+      "not_authoritative_for": [
+        "any line named by the errata",
+        "grammar beyond six shapes",
+        "capacity",
+        "hybrid generator",
+        "DisCoCirc/MPS",
+        "lambeq/DisCoPy conventions (UNVERIFIED)"
+      ]
+    },
+    {
+      "key": "errata",
+      "path": "/tmp/claude-0/-home-user-modular/58690423-9136-5dc0-b3e6-6a28285a6c82/scratchpad/qnlp_spec_errata_v1_1.md",
+      "role": "12 corrections (E-1..E-4, E-6..E-13) and 1 clarification (E-5) keyed to spec lines; Sec. B no-change list",
+      "status": "governing",
+      "sha256": "a5ebbf57971ab65ed534e3a8c41272330e8196bdd903a59934cc71fe04904359",
+      "lines": 217,
+      "bytes": 20907,
+      "authoritative_for": [
+        "replacement text at every cited spec line",
+        "named addendum lines a107, a130-131, a486/488, a708/a788, a721, a726, a1560/1566/1657, Sec. 19 SPSA",
+        "new tests T-EZ, E-5 offsets, E-6 endpoint, E-7 stall, E-10 saddle/E[D], E-12 greedy-vs-chart"
+      ],
+      "not_authoritative_for": [
+        "anything it does not cite",
+        "HVX cycle counts (instruction-count estimates, UNVERIFIED)"
+      ]
+    },
+    {
+      "key": "addendum",
+      "path": "/tmp/claude-0/-home-user-modular/58690423-9136-5dc0-b3e6-6a28285a6c82/scratchpad/qnlp_spec_addendum_coverage_capacity.md",
+      "role": "Sections 11-19: grammar coverage, capacity, hybrid, discourse/MPS, positioning, extended memory table, tests T11-T24, conventions C14-C17",
+      "status": "extension",
+      "sha256": "6b5e4bd95e0a17c4c8471d75acdced9d50bbafb4c03846fb959cf8000386afa5",
+      "lines": 1928,
+      "bytes": 179689,
+      "authoritative_for": [
+        "chart parser and lexicon",
+        "spiders",
+        "arbitrary cup structures and node ops (C16)",
+        "tree adjoint",
+        "capacity and scaling laws",
+        "hybrid angle generator and export block (C15, 13.7)",
+        "DisCoCirc (C17) and MPS",
+        "evaluation plan",
+        "extended memory table",
+        "tests T11-T24"
+      ],
+      "not_authoritative_for": [
+        "lines named by the errata",
+        "literature figures (Sec. 19 item 1)",
+        "Sec. 12.3 precision/p_min numbers derived with superseded constants"
+      ]
+    },
+    {
+      "key": "companion",
+      "path": "/root/.claude/uploads/58690423-9136-5dc0-b3e6-6a28285a6c82/f1469dfb-qnlp_review_synthesis_and_application_refinement.md",
+      "role": "external companion v1.1: requirements, scope widening (typed records, processes, temporal layer), claim-disposition register RV01-RV60",
+      "status": "uploaded-external",
+      "sha256": "210bd23a643293e2fdb46fa5f7f386d72b03dc20b9992960db4872d483830028",
+      "lines": 1082,
+      "bytes": 104202,
+      "authoritative_for": [
+        "requirements as constraints (resource categories, tractability contract, output status fields, export metadata list, ablations, gates)",
+        "deferred-scope sections 10-12.8 and 14"
+      ],
+      "not_authoritative_for": [
+        "any technical correction (errata supersede)",
+        "any number (review re-derived)",
+        "its own adoption status (review l31-37)"
+      ]
+    },
+    {
+      "key": "review",
+      "path": "/tmp/claude-0/-home-user-modular/58690423-9136-5dc0-b3e6-6a28285a6c82/scratchpad/review_of_companion_v1_1.md",
+      "role": "review of the companion: verdict per correction, companion defects, consistency with addendum, architecture assessment, minimal falsifiable programme P0",
+      "status": "review",
+      "sha256": "3d2fa31226264381d73c8ddcc6806cb35405ea92d50f157f3a851866e0225f54",
+      "lines": 603,
+      "bytes": 61422,
+      "authoritative_for": [
+        "reading of the companion's wording",
+        "verdicts and derivations behind the errata",
+        "addendum consistency actions",
+        "programme P0"
+      ],
+      "not_authoritative_for": [
+        "final errata wording (errata carry second-pass fixes)",
+        "existence of the limits report (stale at l6-7, l384)"
+      ]
+    },
+    {
+      "key": "limits",
+      "path": "/tmp/claude-0/-home-user-modular/58690423-9136-5dc0-b3e6-6a28285a6c82/scratchpad/qnlp_hardware_limits_distilled.md",
+      "role": "what QNLP has not done, why, and its GPU/NPU maths: themes A1-A8 and B, Tables A/B, tier-C table, primitive cost table",
+      "status": "report",
+      "sha256": "5298903da120bd73036cfd60926ae8f5ded7665ff4104d246a8d64f9737410ec",
+      "lines": 1683,
+      "bytes": 178827,
+      "authoritative_for": [
+        "kernels, tests and working sets of its own themes (NU/SF/G/T/HO/L labels)"
+      ],
+      "not_authoritative_for": [
+        "anything overlapping the addendum",
+        "conventions (its C1..C27 are candidate ids)",
+        "literature (from memory)",
+        "operand-only working set l1301",
+        "hardware-only SPSA iteration count l1257"
+      ]
+    },
+    {
+      "key": "verify_c",
+      "path": "/tmp/claude-0/-home-user-modular/58690423-9136-5dc0-b3e6-6a28285a6c82/scratchpad/verify.c",
+      "role": "fp64 C reference reproducing spec Sec. 8, FD gradients, shift rules, CRz decomposition, periodicity, index helpers at W = 6",
+      "status": "frozen",
+      "sha256": "ecdb49e3c7baf7b91f91cc2697bbf7e504063ddd1b5df0bd302e207d963fa052",
+      "lines": 103,
+      "bytes": 8528,
+      "authoritative_for": [
+        "every number it prints (spec Sec. 8; T1, T3 CRz part, T4-T6, T7 FD/shift parts)"
+      ],
+      "not_authoritative_for": [
+        "implementation conventions (interleaved double complex, eps = 0)",
+        "T2, T3 CRx (comment at line 91 not coded), T7 adjoint/Sim15 sign, T8-T10"
+      ]
+    },
+    {
+      "key": "puremath",
+      "path": "/tmp/claude-0/-home-user-modular/58690423-9136-5dc0-b3e6-6a28285a6c82/scratchpad/qnlp_pure_mathematics.md",
+      "role": "pure-mathematics companion, v1.1: definitions, lemmas, propositions, theorems and proofs (283 labelled results, Chapters 1-7) behind the conventions, bounds and algorithms; Appendix A result <-> engineering-label correspondence; Appendix B conjectures / UNVERIFIED / open problems (37 items); Appendix C standard results",
+      "status": "registered (1.2.0, 2026-09-24); ranks with the review for derivations, below the errata for any spec line (R14)",
+      "sha256": "0254d2b100df04a147fd4595b54d0e412690ae1b0a7a75b7ad260601087a1996",
+      "lines": 3776,
+      "bytes": 324707,
+      "authoritative_for": [
+        "proofs of its results",
+        "statements of its results (283 labelled items)",
+        "its Appendix A correspondence tables (result -> engineering label; label -> result)"
+      ],
+      "not_authoritative_for": [
+        "conventions (C1-C17 remain the spec/addendum)",
+        "implementation values: kernels, number formats, store rules, tolerances, test expected values, memory figures, hardware facts (engineering documents govern; R8, R14)",
+        "its Appendix B conjectures, UNVERIFIED statements and open problems (R7)",
+        "literature citation details",
+        "any baseline change except through a new erratum"
+      ],
+      "supports_conflict_rows": [
+        2,
+        3,
+        4,
+        8,
+        9,
+        12,
+        15
+      ]
+    },
+    {
+      "key": "dsdm",
+      "path": "/tmp/claude-0/-home-user-modular/58690423-9136-5dc0-b3e6-6a28285a6c82/scratchpad/qnlp_dsdm_delivery_plan.md",
+      "role": "DSDM delivery plan, v1.0: principles and PAQ, roles and vacancies, lifecycle products, Prioritised Requirements List (138 schedulable rows, 5 NFR Musts, 9 Won'ts), increments I0-I7 in 18 two-week timeboxes TB0-TB17 plus final deployment (38 weeks nominal), gates G0-G7 with the P0 falsification gate G4, SAD/DAD summaries, risk log, traceability matrix, estimation, management approach, benefits",
+      "status": "registered (1.2.0, 2026-09-24); no technical precedence (R14)",
+      "sha256": "3e2b0ba07867e9e527bf7372092366962a01f83fcfeb2e28b1f994ef2a7cf9ce",
+      "lines": 1789,
+      "bytes": 199966,
+      "authoritative_for": [
+        "schedule (week offsets, timeboxes, deployments)",
+        "priority (MoSCoW of every PRL row)",
+        "acceptance sequencing (which test closes which requirement in which timebox; gates G0-G7 incl. P0 gate G4)",
+        "roles, vacancies, risk ownership, definition of done"
+      ],
+      "not_authoritative_for": [
+        "any technical statement (numbers, conventions, bounds, test values are quoted; the cited document governs)",
+        "precedence (inherits R1-R13)",
+        "its own estimates and velocity (UNVERIFIED planning assumptions, group Q)"
+      ]
+    }
+  ],
+  "verification_program_folders": [
+    "verify.c",
+    "addendum/",
+    "critic/",
+    "critic2/",
+    "derivH/",
+    "verH/",
+    "verE/",
+    "refE/",
+    "derivF/",
+    "second/",
+    "verEZ/",
+    "consist/",
+    "scope/",
+    "verQ15/",
+    "verLane/",
+    "amp72/",
+    "bp/",
+    "parseK/",
+    "adj_dz/",
+    "fit/",
+    "audit/",
+    "nonunit/",
+    "spec/",
+    "gram/",
+    "ptrace/",
+    "discocirc_ho/",
+    "exact_train/",
+    "wirerep/",
+    "lexicon/",
+    "parsestruct/",
+    "spsa_var.c",
+    "fp16_absorb.c",
+    "fp16_c12.c",
+    "errbound_check.c",
+    "errata_numbers.c",
+    "lipschitz_check.c",
+    "verify_export_bytes.c",
+    "jacobi.c"
+  ],
+  "precedence_rules": [
+    {
+      "id": "R1",
+      "rule": "Errata override the baseline at the cited spec lines; the spec file stays byte-identical; E-5 is a clarification, the rest corrections; errata Sec. B lists companion claims needing no change."
+    },
+    {
+      "id": "R2",
+      "rule": "Baseline conventions C1-C13 govern every document unless an erratum says otherwise (only E-8 touches Sec. 0, C12)."
+    },
+    {
+      "id": "R3",
+      "rule": "Addendum C14-C17 and Secs. 11-19 extend and never override; where the errata names an addendum line, read the errata over it; elsewhere the addendum is the document of record for grammar coverage, capacity, hybrid, discourse/MPS, positioning, memory table, export extension C15."
+    },
+    {
+      "id": "R4",
+      "rule": "Review verdicts govern over the companion's wording; 'Correct' in RV rows corrects the third-party discussion, never the baseline; companion adoption conditional on review conditions (i)-(v), only (i) discharged."
+    },
+    {
+      "id": "R5",
+      "rule": "Companion requirements are constraints binding only when mapped to a document of record or recorded as gaps; its technical corrections are superseded by the errata; requirements of companion Secs. 10-12.8 and 14 are deferred until P0 reports."
+    },
+    {
+      "id": "R6",
+      "rule": "Hardware-limits report is advisory; cites the addendum where they overlap; its labels and LIM-* conventions apply only inside kernels imported from it (LIM-n are inventory ids absent from the limits file; resolve by the limits line quoted beside them, bridge Sec. 3.1, e.g. LIM-12 = limits Sec. 2.2 (8)(iii) l473-474); its 'replaces' statements are scoped to the objectives it introduces; its Haar-expectation figures never replace exact conventions."
+    },
+    {
+      "id": "R7",
+      "rule": "UNVERIFIED beats asserted: only CONFIRMED errata, normative spec/addendum text, or a listed fp64 program establish a statement; nothing in the set is measured on a device; register residency is a ptxas target."
+    },
+    {
+      "id": "R8",
+      "rule": "Numeric precedence per claim: verify_c (Sec. 8 numbers) > errata > review > addendum > limits > spec > companion; recompute downstream numbers by the governing formula and label UNVERIFIED; rounding differences are not conflicts; review self-corrections resolve to the later value."
+    },
+    {
+      "id": "R9",
+      "rule": "Unresolved conflict: record it (topic, a, b, resolution, rule), prefer the more recent derivation backed by a program, flag to the engineer with proposed erratum text; never resolve silently in code."
+    },
+    {
+      "id": "R10",
+      "rule": "Symbol namespacing: spec C9/Sec. 0 symbols keep their meaning; other uses qualified (D_V, D_s, depth D, S_q15, S(rho), N_nouns, m_arg); canonical d_n, d_s; ids Cn, Tn, (S.n), (11.n)-(19.n) reserved; other documents' same-shaped ids cited with a prefix."
+    },
+    {
+      "id": "R11",
+      "rule": "Form scoping: circuit-form rules (C11, sign_k = -1, shift rules, W_hw) apply to the bent-wire circuit; tree-form rules (11.7, sign_k = +1, C16) to Sec. 11 sentences on the simulator; C17 to DisCoCirc registers; LIM-7/8/NU.5 to density-matrix kernels; every gate carries its form."
+    },
+    {
+      "id": "R12",
+      "rule": "Exact conventions (C8 Bell factor, (1.4) P_post, D = Z) are never replaced by Haar expectations (E[Z], E[P_post], A = 2^{q_n}); expectations serve floors, p_min, format selection only."
+    },
+    {
+      "id": "R13",
+      "rule": "KB = 1024 B; exact byte figures govern over shorthand ('100 KB' = 100,000 B); documents identified by SHA-256, not path."
+    },
+    {
+      "id": "R14",
+      "rule": "Registered companions (1.2): puremath is authoritative for proofs and statements of results and ranks with the review for derivations, below the errata for any spec line; engineering documents (spec with errata, addendum, limits for its own themes, verify.c for what it prints) remain authoritative for implementation values; a puremath number is still ranked by R8, disagreements go to R9, baseline changes need an erratum; puremath Appendix B items carry no authority. dsdm is authoritative for schedule, priority (MoSCoW) and acceptance sequencing only, has no technical precedence and inherits R1-R13."
+    }
+  ],
+  "conventions": [
+    {
+      "id": "C1",
+      "doc": "spec",
+      "line": 13,
+      "statement": "Little-endian bit order; qubit j = bit j; qubit 0 LSB"
+    },
+    {
+      "id": "C2",
+      "doc": "spec",
+      "line": 17,
+      "statement": "Kronecker order: left factor = high bits; explicit index maps for words"
+    },
+    {
+      "id": "C3",
+      "doc": "spec",
+      "line": 22,
+      "statement": "Split-planar re[]/im[] storage; row-major matrices; column vectors psi' = U psi"
+    },
+    {
+      "id": "C4",
+      "doc": "spec",
+      "line": 28,
+      "statement": "Operator products right-to-left; gate lists left-to-right (first listed = first applied)"
+    },
+    {
+      "id": "C5",
+      "doc": "spec",
+      "line": 32,
+      "statement": "R_P(theta) = exp(-i theta P/2); angles stored as uint16 half-angle turns, theta = 4 pi k/65536; 4 pi-periodic"
+    },
+    {
+      "id": "C6",
+      "doc": "spec",
+      "line": 48,
+      "statement": "2q gates: m = bit_lo + 2 bit_hi; controlled gates by bit tests; CRz symmetric phases"
+    },
+    {
+      "id": "C7",
+      "doc": "spec",
+      "line": 62,
+      "statement": "Word factors left to right; first factor lowest bits; V[a,s,b] = phi[a + 2^{q_n} s + 2^{q_n+q_s} b]"
+    },
+    {
+      "id": "C8",
+      "doc": "spec",
+      "line": 73,
+      "statement": "Cups = unnormalised Bell effect, component-wise pairing; circuit CNOT, H, postselect 00 = contraction x 2^{-q/2} per cup"
+    },
+    {
+      "id": "C9",
+      "doc": "spec",
+      "line": 81,
+      "statement": "Symbols Ng, D (postselection denominator), u, p_surv, W, N = 2^W, FMA-class op"
+    },
+    {
+      "id": "C10",
+      "doc": "spec",
+      "line": 86,
+      "statement": "Ansatz ids 0 IQP no closing H, 1 IQP + H, 2 Sim14, 3 Sim15, 4 Ry-only; angle layouts and P_w"
+    },
+    {
+      "id": "C11",
+      "doc": "spec",
+      "line": 104,
+      "statement": "U^T = reversed gate list with Ry angles negated; other gates symmetric"
+    },
+    {
+      "id": "C12",
+      "doc": "spec",
+      "line": 110,
+      "statement": "fp16 facts; probabilities never accumulated in fp16 (absorption criterion corrected by errata E-8 l95)"
+    },
+    {
+      "id": "C13",
+      "doc": "spec",
+      "line": 115,
+      "statement": "Paulis, generators, dense 4x4 forms both orientations, lift_lo/lift_hi, dense reference M for T2"
+    },
+    {
+      "id": "C14",
+      "doc": "addendum",
+      "line": 17,
+      "statement": "KB = 1024 B; tiers REGISTER/VTCM/SMEM/HBM; register residency is a ptxas-verified target"
+    },
+    {
+      "id": "C15",
+      "doc": "addendum",
+      "line": 26,
+      "statement": "Types {N,S,I,Q}; q_i @20, q_q @21; type_sig base codes 0-3; spider ansatz_id 0xFE; flags.bit3 generator; param_offset 0xFFFFFFFF = generate; version += 1"
+    },
+    {
+      "id": "C16",
+      "doc": "addendum",
+      "line": 38,
+      "statement": "struct Cup (2 B), struct Node (14 B), node ops, tree[] post-order; device receives cups[] + tree[]"
+    },
+    {
+      "id": "C17",
+      "doc": "addendum",
+      "line": 58,
+      "statement": "DisCoCirc functor: noun wire fields, subject low / object high, wire_map(j), pi permutation for dense forms, gate emission order, head-noun rule, RDM readout"
+    }
+  ],
+  "symbols": [
+    {
+      "symbol": "psi[i], W, N",
+      "meaning": "state array of 2^W amplitudes; N = 2^W",
+      "doc": "spec",
+      "line": 13,
+      "collision": "N = noun wires in addendum C17 l58 (write N_nouns)"
+    },
+    {
+      "symbol": "q_n, q_s, q_i, q_q",
+      "meaning": "qubits per noun/sentence/infinitive/question type",
+      "doc": "spec",
+      "line": 65
+    },
+    {
+      "symbol": "d_n, d_s",
+      "meaning": "2^{q_n}, 2^{q_s}; addendum/limits write d = d_n",
+      "doc": "spec",
+      "line": 343
+    },
+    {
+      "symbol": "Q_w, Q, fo_w, off_w, start(p), width(p)",
+      "meaning": "word width, factor offsets, field start/width",
+      "doc": "spec",
+      "line": 65
+    },
+    {
+      "symbol": "phi_w, V[a,s,b], IV[a,s]",
+      "meaning": "word state; verb and intransitive views",
+      "doc": "spec",
+      "line": 67
+    },
+    {
+      "symbol": "sigma[s], Z, Z_min, sigma_hat, P_post",
+      "meaning": "unnormalised sentence; norm; guard 1e-12; normalised; Bell postselection probability",
+      "doc": "spec",
+      "line": 215
+    },
+    {
+      "symbol": "D",
+      "meaning": "postselection denominator = sum_c N_c = p_surv = Z (bent-wire)",
+      "doc": "spec",
+      "line": 81,
+      "collision": "D_V = 2^{Q_V} (errata E-1 l15, review l57); D_s = 2^{q_s} (limits l526); depth D (addendum l186); word D (addendum (12.17))"
+    },
+    {
+      "symbol": "S",
+      "meaning": "surviving s field / readout index set {i: (i & M_post) == 0}",
+      "doc": "spec",
+      "line": 297,
+      "collision": "S_q15 = 1 - 2^-15 (errata E-6 l78); S(rho) entropy (limits A2); S superoperator (HO.3); S_k singular values (addendum (14.10))"
+    },
+    {
+      "symbol": "K, M_post, b(c)",
+      "meaning": "postselected qubit set; mask; class index c << S",
+      "doc": "spec",
+      "line": 297,
+      "collision": "K Kraus operator (limits A1); K branches (addendum 14.5); |K| count (errata E-10)"
+    },
+    {
+      "symbol": "N_c, P_c, g_c, eps_D",
+      "meaning": "class weight, probability, dL/dP_c, guard 1e-7",
+      "doc": "spec",
+      "line": 966
+    },
+    {
+      "symbol": "k (uint16), phi",
+      "meaning": "half-angle turns; phi = 2 pi k/65536",
+      "doc": "spec",
+      "line": 40,
+      "collision": "k readout index (1.6); k sentence-wire index (limits LIM-14)"
+    },
+    {
+      "symbol": "m",
+      "meaning": "local 2q index bit_lo + 2 bit_hi",
+      "doc": "spec",
+      "line": 49,
+      "collision": "flip mask (spec 2.4); feature dimension (addendum Sec. 13); type-string length (addendum 11.1); m_arg argument order (limits HO.1)"
+    },
+    {
+      "symbol": "u, u16, u32",
+      "meaning": "unit roundoff",
+      "doc": "spec",
+      "line": 82,
+      "collision": "u MPO intermediate (addendum (12.14)); u = M^H tau (limits G.6)"
+    },
+    {
+      "symbol": "Ng",
+      "meaning": "gate count (fused in Sec. 4.6 tables, unfused for the adjoint)",
+      "doc": "spec",
+      "line": 81
+    },
+    {
+      "symbol": "p_surv, p_min, A, E, Ng_max",
+      "meaning": "survival probability; re-run threshold; amplification; output error; gate budget",
+      "doc": "spec",
+      "line": 863,
+      "collision": "corrected by errata E-11"
+    },
+    {
+      "symbol": "T, restT, cupT, R",
+      "meaning": "fused tensordot open tensor and fields",
+      "doc": "spec",
+      "line": 231,
+      "collision": "T = non-unitary trace (limits A1); T = InfoNCE temperature (limits G.4)"
+    },
+    {
+      "symbol": "wire_map[j]",
+      "meaning": "effect-word factor j -> physical qubit (array)",
+      "doc": "spec",
+      "line": 291,
+      "collision": "addendum C17 wire_map(j) function l60; limits slot_of_wire[] l846"
+    },
+    {
+      "symbol": "W_hw, W_train",
+      "meaning": "minimum circuit width; uncompacted training width",
+      "doc": "spec",
+      "line": 275,
+      "collision": "addendum (11.23), (11.23')"
+    },
+    {
+      "symbol": "sign_k",
+      "meaning": "-1 for Ry in a transposed effect word (circuit form); +1 for every gate in the tree form",
+      "doc": "spec",
+      "line": 1029,
+      "collision": "addendum l537"
+    },
+    {
+      "symbol": "psi_k, lambda_k, O_eff, gbar, w_c",
+      "meaning": "adjoint objects; w_c = (g_c - gbar)/D",
+      "doc": "spec",
+      "line": 1011
+    },
+    {
+      "symbol": "d1, d2",
+      "meaning": "four-term shift coefficients 0.4267767, -0.0732233",
+      "doc": "spec",
+      "line": 995
+    },
+    {
+      "symbol": "i0, i1, i00, idx[m], compact, i11",
+      "meaning": "index helpers",
+      "doc": "spec",
+      "line": 362
+    },
+    {
+      "symbol": "PROGRAM opcodes",
+      "meaning": "ONLINE, G1, G2, TRANSPOSED, CUP_BELL, POST00, POST0, CONTRACT, READOUT; + G2F/G1F (addendum l1221); + ctrl (limits l895)",
+      "doc": "spec",
+      "line": 488
+    },
+    {
+      "symbol": "Layout A/B/B-blocked/C",
+      "meaning": "CUDA layouts; only C uses shared memory (E-13)",
+      "doc": "spec",
+      "line": 535
+    },
+    {
+      "symbol": "WS, WS_full, WS_inplace",
+      "meaning": "HVX working-set registers (<= 11 per E-9); tensordot amplitude counts",
+      "doc": "addendum",
+      "line": 676
+    },
+    {
+      "symbol": "Fid, F, F_root, F_sq",
+      "meaning": "fidelities; spec 1.5 and addendum 14.6 are both F_sq",
+      "doc": "spec",
+      "line": 335,
+      "collision": "limits LIM-10 l356"
+    },
+    {
+      "symbol": "rho[a][a']",
+      "meaning": "density matrix, ket row, bra column",
+      "doc": "spec",
+      "line": 344,
+      "collision": "packing differs: spec l347 upper, limits LIM-11 lower"
+    },
+    {
+      "symbol": "delta, mu, Delta, eps, eta",
+      "meaning": "Frobenius spider ops",
+      "doc": "addendum",
+      "line": 192,
+      "collision": "eps readout guard (spec 1.7); eps^2 MPS discarded weight (addendum (14.12))"
+    },
+    {
+      "symbol": "lambda_x",
+      "meaning": "Wirtinger cotangent (1/2)(dL/dRe + i dL/dIm) = dL/dconj(x)",
+      "doc": "addendum",
+      "line": 511
+    },
+    {
+      "symbol": "struct Cup, struct Node, tree[], R[v]",
+      "meaning": "Sec. 11 device inputs and reduced vectors",
+      "doc": "addendum",
+      "line": 39
+    },
+    {
+      "symbol": "L, L_sat, L_k",
+      "meaning": "ansatz layers; saturation depth; per-step operator-norm gain",
+      "doc": "spec",
+      "line": 86,
+      "collision": "addendum (12.3); errata E-11 l163"
+    },
+    {
+      "symbol": "A, B, C",
+      "meaning": "adjoint vectors (spec l1021); MPO cores (addendum (12.13)); Sinkhorn matrix A (limits B)",
+      "doc": "spec",
+      "line": 1021
+    },
+    {
+      "symbol": "chi_i, A_i, Theta, S_tol",
+      "meaning": "MPS bond dimension, site tensors, two-site tensor, rank guard 1e-6",
+      "doc": "addendum",
+      "line": 1272
+    },
+    {
+      "symbol": "f_c, W_c, b_c, Cc, mix32, x_w, E",
+      "meaning": "hybrid generator objects",
+      "doc": "addendum",
+      "line": 885
+    },
+    {
+      "symbol": "E[Z], sd(Z), Beta(d_s, D_V - d_s)",
+      "meaning": "Haar statistics of Z (value l14, Beta law l15, sd l16; |K| = 2 q_n l23); E[D] = E[Z] = 2^{-2 q_n}, not P_post (2^{-4 q_n})",
+      "doc": "errata",
+      "line": 15
+    },
+    {
+      "symbol": "e, eta_k",
+      "meaning": "error norm ||delta||; additive per-step error",
+      "doc": "errata",
+      "line": 151
+    },
+    {
+      "symbol": "REGISTER/VTCM/SMEM/HBM",
+      "meaning": "memory tiers",
+      "doc": "addendum",
+      "line": 18
+    },
+    {
+      "symbol": "cL/sL/aL",
+      "meaning": "companion/spec/addendum line prefixes",
+      "doc": "review",
+      "line": 9
+    },
+    {
+      "symbol": "RVnn, S1-S17, CP-n",
+      "meaning": "companion register rows, sources, inventory-assigned rule ids",
+      "doc": "companion",
+      "line": 948
+    },
+    {
+      "symbol": "A1..A8, B1..B20, C1..C27 (candidates)",
+      "meaning": "limits theme/row/candidate ids, not conventions",
+      "doc": "limits",
+      "line": 37
+    }
+  ],
+  "equations": [
+    {
+      "label": "(0.1)-(0.4)",
+      "doc": "spec",
+      "line": 34,
+      "topic": "gates",
+      "what": "Rx, Ry, Rz, H"
+    },
+    {
+      "label": "(0.5)-(0.8)",
+      "doc": "spec",
+      "line": 52,
+      "topic": "gates",
+      "what": "CNOT, CZ, CRz, CRx by bit tests"
+    },
+    {
+      "label": "(0.9)",
+      "doc": "spec",
+      "line": 65,
+      "topic": "layout",
+      "what": "word field offsets"
+    },
+    {
+      "label": "(0.10)-(0.12)",
+      "doc": "spec",
+      "line": 117,
+      "topic": "gates",
+      "what": "Paulis; dense 4x4 forms; lift_lo/lift_hi"
+    },
+    {
+      "label": "(1.1)",
+      "doc": "spec",
+      "line": 152,
+      "topic": "grammar",
+      "what": "pregroup rewrite"
+    },
+    {
+      "label": "(1.2)-(1.5)",
+      "doc": "spec",
+      "line": 200,
+      "topic": "model",
+      "what": "word state; monolithic contraction; Z and P_post; N TV N form"
+    },
+    {
+      "label": "(1.6)-(1.7)",
+      "doc": "spec",
+      "line": 331,
+      "topic": "readout",
+      "what": "probabilities; K-class readout and CE loss, eps = 1e-9"
+    },
+    {
+      "label": "(2.1)-(2.8)",
+      "doc": "spec",
+      "line": 361,
+      "topic": "kernel",
+      "what": "butterfly; pair/quad enumeration; compact; postselect; Bell gather; Kronecker-in; matmul form"
+    },
+    {
+      "label": "(3.1)",
+      "doc": "spec",
+      "line": 550,
+      "topic": "hardware",
+      "what": "Layout B warp butterfly"
+    },
+    {
+      "label": "(4.1)-(4.6)",
+      "doc": "spec",
+      "line": 767,
+      "topic": "numerics",
+      "what": "unit dot products; per-gate constants; Ng bound; probability perturbation; Q1.15 scheme; g_Q15"
+    },
+    {
+      "label": "(4.7)",
+      "doc": "spec",
+      "line": 856,
+      "topic": "numerics",
+      "what": "postselection amplification -- read with errata E-11 l151"
+    },
+    {
+      "label": "(4.8)-(4.9)",
+      "doc": "spec",
+      "line": 912,
+      "topic": "numerics",
+      "what": "tensordot range and error -- read with errata E-6 l78 and E-11 l155"
+    },
+    {
+      "label": "tensordot Q1.15 store",
+      "doc": "spec",
+      "line": 918,
+      "topic": "numerics",
+      "what": "n' = sat_int16((acc + 2^14) >> 15), Q1.15 x Q1.15 -> Q2.30, HVX vasr Rt8 = 15; distinct from gate-path store (4.5) spec l810 sat_int16((acc + 2^13) >> 14), Q3.29, Rt8 = 14 (l658)"
+    },
+    {
+      "label": "(5.1)-(5.9)",
+      "doc": "spec",
+      "line": 966,
+      "topic": "learning",
+      "what": "objective; two-term shift; quotient rule; four-term shift; decompositions; adjoint (5.6)-(5.8); Adam"
+    },
+    {
+      "label": "E-1",
+      "doc": "errata",
+      "line": 14,
+      "topic": "statistics",
+      "what": "E[Z] = 2^{-2 q_n}; Beta law; sd"
+    },
+    {
+      "label": "E-2",
+      "doc": "errata",
+      "line": 32,
+      "topic": "learning",
+      "what": "SPSA variance sum_{j!=i} g_j^2 + sigma^2/(2c^2)"
+    },
+    {
+      "label": "E-6",
+      "doc": "errata",
+      "line": 78,
+      "topic": "numerics",
+      "what": "Q1.15 pre-scale S = 1 - 2^-15; unscaled constant sqrt(2n+3) 2^-16"
+    },
+    {
+      "label": "E-7/E-8",
+      "doc": "errata",
+      "line": 89,
+      "topic": "numerics",
+      "what": "fp16 sum exact to 2048; absorption below half an ulp"
+    },
+    {
+      "label": "E-9",
+      "doc": "errata",
+      "line": 108,
+      "lines": "100-124 (item); 108-110 register counts; 112-113 coefficient-generation estimate; 115-116 fp16 path / prefer Q1.15 for error bound; 121-123 WS <= 11",
+      "topic": "hardware",
+      "what": "HVX register count 24 tensordot / 27 CRz / 28-29 Rx; WS <= 11"
+    },
+    {
+      "label": "E-10",
+      "doc": "errata",
+      "line": 130,
+      "topic": "learning",
+      "what": "IQP saddle; projector scaling 2^{-2W}; tail bound (1+P)/(2D)"
+    },
+    {
+      "label": "E-11",
+      "doc": "errata",
+      "line": 151,
+      "topic": "numerics",
+      "what": "corrected (4.7)/(4.9); certificate 2e/(2 sqrt D - e); p_min; recurrence e_{k+1} <= L_k e_k + eta_k"
+    },
+    {
+      "label": "E-12",
+      "doc": "errata",
+      "line": 180,
+      "topic": "grammar",
+      "what": "chart cost (m-1)(m+1)(m+3)/24"
+    },
+    {
+      "label": "E-13",
+      "doc": "errata",
+      "line": 199,
+      "topic": "kernel",
+      "what": "slot-rule hazard: one 8 B accumulator"
+    },
+    {
+      "label": "(11.1)-(11.5)",
+      "doc": "addendum",
+      "line": 84,
+      "topic": "grammar",
+      "what": "adjoints, contraction, expansion; chart recurrence; accept"
+    },
+    {
+      "label": "(11.6)-(11.13')",
+      "doc": "addendum",
+      "line": 194,
+      "topic": "spiders",
+      "what": "delta, mu, Delta, eps/eta; who, whom, and_n, and_vp, and_s; sum semantics (11.12')"
+    },
+    {
+      "label": "(11.14)-(11.17')",
+      "doc": "addendum",
+      "line": 219,
+      "topic": "grammar",
+      "what": "relative clause and coordination formulas; THAT orientation (11.14') l376"
+    },
+    {
+      "label": "(11.18')-(11.21)",
+      "doc": "addendum",
+      "line": 271,
+      "topic": "contraction",
+      "what": "peak recurrence; cycle chain; macs; crude bound; streaming cut width"
+    },
+    {
+      "label": "(11.22)-(11.23'')",
+      "doc": "addendum",
+      "line": 412,
+      "topic": "circuit",
+      "what": "2-colouring; W_hw; W_train; growth law"
+    },
+    {
+      "label": "(11.25)-(11.26)",
+      "doc": "addendum",
+      "line": 473,
+      "topic": "ambiguity",
+      "what": "parse superposition; mixture"
+    },
+    {
+      "label": "(11.27)-(11.31)",
+      "doc": "addendum",
+      "line": 511,
+      "topic": "training",
+      "what": "Wirtinger cotangent; root; word; child; per-word gradients sign_k = +1; M_train"
+    },
+    {
+      "label": "(12.1)-(12.20)",
+      "doc": "addendum",
+      "line": 582,
+      "topic": "capacity",
+      "what": "dof; P_w/L_sat; IQP phase form; rank; trig polynomial; multilinearity; order sensitivity; working set; lexicon bytes; MPO; odometer; two-layer; verdict"
+    },
+    {
+      "label": "(13.1)-(13.12)",
+      "doc": "addendum",
+      "line": 886,
+      "topic": "hybrid",
+      "what": "generator; codec; bytes(f); FNV/mix32; DisCoCirc updating; context; density composition; re-uploading; gradients"
+    },
+    {
+      "label": "(14.1)-(14.19')",
+      "doc": "addendum",
+      "line": 1176,
+      "topic": "discourse",
+      "what": "DisCoCirc product; bending; Ng_text; MPS; two-site update; Jacobi SVD; Schmidt/MI; chi_exact; channel; RDMs"
+    },
+    {
+      "label": "(15.1)",
+      "doc": "addendum",
+      "line": 1502,
+      "topic": "positioning",
+      "what": "sigma affine per word occurrence A_w"
+    },
+    {
+      "label": "(NU.1)-(NU.7)",
+      "doc": "limits",
+      "line": 189,
+      "topic": "density",
+      "what": "fuzz, phaser, Mult, Schur update, sign table, gradients"
+    },
+    {
+      "label": "(SF.1)-(SF.7)",
+      "doc": "limits",
+      "line": 379,
+      "topic": "spectral",
+      "what": "rho = P P^H; 2x2 closed form; Jacobi; functionals; MI; Frechet cotangent"
+    },
+    {
+      "label": "(G.1)-(G.9)",
+      "doc": "limits",
+      "line": 530,
+      "topic": "gram",
+      "what": "Gram; fidelities; InfoNCE; slot scoring; cotangents"
+    },
+    {
+      "label": "(T.1)-(T.5)",
+      "doc": "limits",
+      "line": 636,
+      "topic": "partial trace",
+      "what": "RDM; ins(); WHT; marginals; seed"
+    },
+    {
+      "label": "(HO.1)-(HO.10)",
+      "doc": "limits",
+      "line": 849,
+      "topic": "discocirc",
+      "what": "dense controlled gate; frames; sandwich; retained s wire; slice; trace; slot reuse; assertion; sampler"
+    },
+    {
+      "label": "(L.1)-(L.4)",
+      "doc": "limits",
+      "line": 1242,
+      "topic": "lexicon",
+      "what": "amplitude nouns; low-rank init; streamed tensordot; cross-lingual fidelity"
+    }
+  ],
+  "tests": [
+    {
+      "id": "T1",
+      "doc": "spec",
+      "line": 1259,
+      "what": "index helpers W = 6",
+      "expected": "bijection; i00 >= j; compact inverse",
+      "program": "verify.c"
+    },
+    {
+      "id": "T2",
+      "doc": "spec",
+      "line": 1260,
+      "what": "apply_1q/2q vs dense M",
+      "expected": "match M psi both orientations",
+      "program": "NONE (gap)"
+    },
+    {
+      "id": "T3",
+      "doc": "spec",
+      "line": 1263,
+      "what": "gate identities",
+      "expected": "CRz residual < 1e-15 (1.68e-16); CRx = Rx CZ Rx CZ; U^T reversed list",
+      "program": "verify.c (CRz only)"
+    },
+    {
+      "id": "T4",
+      "doc": "spec",
+      "line": 1265,
+      "what": "word states",
+      "expected": "Alice [0.71847188-0.31582980i, -0.13353070-0.60516052i]; Bob [0.74959627+0.19470917i, 0.03946950-0.63137622i]; |V[k]| = 0.35355339",
+      "program": "verify.c"
+    },
+    {
+      "id": "T5",
+      "doc": "spec",
+      "line": 1266,
+      "what": "Alice sleeps W = 2",
+      "expected": "Z = 0.58767549; p = [0.34197193, 0.65802807]",
+      "program": "verify.c"
+    },
+    {
+      "id": "T6",
+      "doc": "spec",
+      "line": 1270,
+      "what": "Alice loves Bob four ways",
+      "expected": "Z = 0.14026553; p = [0.58263882, 0.41736118]; Loss 0.54018780 / 0.87380330; P_post(Bell) = 0.03506638; zero angles Z = 0.25",
+      "program": "verify.c"
+    },
+    {
+      "id": "T7",
+      "doc": "spec",
+      "line": 1273,
+      "what": "gradients, shift rules, periodicity, wire maps, Sim15 sign",
+      "expected": "dp_0/dtheta = [0.0701761, 0.0457067, -0.0415143, 0.1819065, -0.1080537, 0.0905236, -0.2073400, -0.5529685]; dLoss = [-0.1204452, -0.0784477, 0.0712521, -0.3122115, 0.1854557, -0.1553682, 0.3558636, 0.9490759]; four-term N_0' = -0.0484303",
+      "program": "verify.c (FD/shift); bp/bp.c, adj_dz/adj_dz.c (adjoint)"
+    },
+    {
+      "id": "T8",
+      "doc": "spec",
+      "line": 1280,
+      "what": "numerics incl. E-6 endpoint, E-7 stall, E-11 bound",
+      "expected": "sum(2048) == sum(2049) == 1.0; E-6 endpoint-case narrowing error 1.53e-5 <= 2^-15 with pre-scale (3.41e-5 without); worked example |delta p0| 3.11e-5 unscaled / 3.47e-5 pre-scaled vs 2e-3 tolerance; |delta P_c| <= 2e/(2 sqrt D - e); stores: gate path >> 14 (spec l810), tensordot path >> 15 (spec l918)",
+      "program": "fp16_absorb.c, verQ15/*.c, second/num.c"
+    },
+    {
+      "id": "T9",
+      "doc": "spec",
+      "line": 1283,
+      "what": "HVX bring-up + E-9 sincos sweep",
+      "expected": "identity ramp; vdelta controls; Q2.14 error 3.074e-5 vs budget (tolerance UNVERIFIED)",
+      "program": "none (needs device)"
+    },
+    {
+      "id": "T10",
+      "doc": "spec",
+      "line": 1285,
+      "what": "export round trip + E-5 offsets",
+      "expected": "type_sig n^r s n^l == 08 01 04 FF FF FF; decode(4172) = 0.399985",
+      "program": "verify_export_bytes.c (sizes only)"
+    },
+    {
+      "id": "T-EZ",
+      "doc": "errata",
+      "line": 27,
+      "what": "mean Z over 1e5 Haar triples",
+      "expected": "0.250 +- 0.002; 0.0625 +- 0.0005",
+      "program": "verEZ/ez.c, second/ez_mc.c"
+    },
+    {
+      "id": "E-2-test",
+      "doc": "errata",
+      "line": 39,
+      "what": "SPSA variance flat in c",
+      "expected": "0.466300 at P = 8 for c = 0.01/0.1/1",
+      "program": "spsa_var.c"
+    },
+    {
+      "id": "E-10-tests",
+      "doc": "errata",
+      "line": 147,
+      "what": "saddle, E[D], exact zeros, clip rate",
+      "expected": "d2P_0/dt0dt6 = -0.25; E[D] = 0.2500; dN_0/dtheta = 0 for Bob t2, loves t1; 52-54 % clipped",
+      "program": "bp/bp.c, second/bp_mc.c, exact_train/et.c"
+    },
+    {
+      "id": "E-12-test",
+      "doc": "errata",
+      "line": 186,
+      "what": "greedy vs chart regression",
+      "expected": "greedy FAILs 'Alice loves man in park'; chart (0,1)(4,5)(3,6)(7,8); whom passes with n^r n n^ll s^l",
+      "program": "second/parse.c, parseK/parsechk.c"
+    },
+    {
+      "id": "T11",
+      "doc": "addendum",
+      "line": 1826,
+      "what": "chart parser",
+      "expected": "lexicon rows exact; 'Alice sleeps and dreams' cups (2,3)(1,4)(0,5)(8,9)(7,10) s at 6; 0 errors on 1e5 strings",
+      "program": "verE/parse.c, refE/chkE.c"
+    },
+    {
+      "id": "T12",
+      "doc": "addendum",
+      "line": 1830,
+      "lines": "1830-1839 (whom 1837-1838)",
+      "scale": "(1,1) only; no (2,1) relative-clause numeric vector exists (G10)",
+      "what": "relative clause (1,1)",
+      "expected": "Z = 0.13192995; p = [0.33023573, 0.66976427]; whom Z = 0.15647590; peak 14 (10)",
+      "program": "addendum/t18.c"
+    },
+    {
+      "id": "T13",
+      "doc": "addendum",
+      "line": 1840,
+      "what": "spider q = 1",
+      "expected": "'Alice and Bob sleep' Z = 0.04209530; 'Alice sleeps and dreams' Z = 0.14867853",
+      "program": "addendum/t18.c"
+    },
+    {
+      "id": "T14",
+      "doc": "addendum",
+      "line": 1846,
+      "what": "THAT orientation",
+      "expected": "1e-15 agreement; transposed order differs > 0.1",
+      "program": "addendum/t18.c"
+    },
+    {
+      "id": "T15",
+      "doc": "addendum",
+      "line": 1848,
+      "what": "4x4 Jacobi SVD",
+      "expected": "S = [3, 2.2360679775, 2.2360679775, 1]; J_4(2) S = [2.8512117716, 2.4329222531, 1.8371875468, 1.2554770653]; rank guard no NaN",
+      "program": "derivH/jsvd.c, verH/mps_nan.c"
+    },
+    {
+      "id": "T16",
+      "doc": "addendum",
+      "line": 1857,
+      "what": "mixed radix d = 3",
+      "expected": "(2,1,0) -> 5; 17 -> (2,2,1); odometer 0..17",
+      "program": "NONE"
+    },
+    {
+      "id": "T17",
+      "doc": "addendum",
+      "line": 1860,
+      "what": "MPO verb integer case",
+      "expected": "V = [21,0,36,3,1,-4,6,-3]; sigma = (70, 126)",
+      "program": "NONE"
+    },
+    {
+      "id": "T18",
+      "doc": "addendum",
+      "line": 1864,
+      "what": "circuit colouring",
+      "expected": "W_hw = 3; one Bell cup on triangle",
+      "program": "addendum/t18b.c"
+    },
+    {
+      "id": "T19",
+      "doc": "addendum",
+      "line": 1867,
+      "what": "codec, mix32, FNV",
+      "expected": "-1.0 -> 60321; 0.8 -> 4172; 13.0 -> 2261; mix32(0) = 0x92CA2F0E; FNV('<the>') = 0xFCF0F1C0",
+      "program": "addendum/mix.c"
+    },
+    {
+      "id": "T20",
+      "doc": "addendum",
+      "line": 1870,
+      "what": "DisCoCirc argument order",
+      "expected": "rho_Alice identical to 1e-12; Sim15 fails controlled-phase test, Sim14 passes",
+      "program": "NONE"
+    },
+    {
+      "id": "T21",
+      "doc": "addendum",
+      "line": 1874,
+      "what": "MPS vs exact",
+      "expected": "<= 1e-10 (4.5e-12); truncation error 1.379e-2 = discarded weight",
+      "program": "derivH/mpstest.c"
+    },
+    {
+      "id": "T22",
+      "doc": "addendum",
+      "line": 1876,
+      "what": "scheduler memory vs (11.18')",
+      "expected": "16/48 (12/40); 14/44; streaming 20/80",
+      "program": "NONE"
+    },
+    {
+      "id": "T23",
+      "doc": "addendum",
+      "line": 1878,
+      "what": "precision (12.3)",
+      "expected": "mean Z 0.25/0.0625/0.0039 +- 10 %; Q1.15 (4,2) <= 2.5e-2 (loose); p_min flag 1.6e-3 (UNVERIFIED vs E-11)",
+      "program": "derivF/zmc.c"
+    },
+    {
+      "id": "T24",
+      "doc": "addendum",
+      "line": 1880,
+      "what": "tree adjoint",
+      "expected": "(a) Sec. 8 dLoss to 1e-7; (b) T12 gradients, M_train = 50; (d) L = 0.68668626; (e) circuit 768 B vs tree 400 B",
+      "program": "critic/adjtree.c"
+    },
+    {
+      "id": "limits-T-W4",
+      "doc": "limits",
+      "line": 752,
+      "lines": "752-777 (also T-SF5 463-467)",
+      "what": "q_n = 2 DisCoCirc two-noun state: RDM, 4x4 Jacobi, entropy, purity, MI",
+      "expected": "eig 0.97766824, 0.02233176, 0, 0; S = 0.15433977 bit; purity 0.95633390; I(Alice:Bob) = 0.30867954 bit; zero eigenvalues <= 1e-6 clamped (fp32 clamp 1e-7, limits l473-474); dense == gate-by-gate to 1e-6",
+      "program": "critic2/extra.c"
+    },
+    {
+      "id": "limits-A1..A8,B",
+      "doc": "limits",
+      "line": 300,
+      "what": "per-theme tests (A1-T1..T5b, T-SF1..5, A3-gram/slot, T-W2..W4, A5 A-H, A6, A7 A-C, A8, B)",
+      "expected": "see limits Sec. 2 (7) headings; fp32 within 1e-6",
+      "program": "nonunit/nu.c, spec/spec_test.c, jacobi.c, gram/gram.c, ptrace/*.c, discocirc_ho/ho2.c, exact_train/et.c, wirerep/qd.c, lexicon/*.c, parsestruct/ps.c, critic2/extra.c"
+    }
+  ],
+  "conflicts": [
+    {
+      "id": 1,
+      "topic": "fp16 absorption criterion (C12)",
+      "a": "spec l113",
+      "b": "errata E-8 l95-98",
+      "resolution": "below half an ulp; term <= 2^-12 x sum",
+      "rule": "R1"
+    },
+    {
+      "id": 2,
+      "topic": "E[Z] Haar words",
+      "a": "spec l218 E[Z] = 1",
+      "b": "errata E-1 l13-28 (Beta l15, |K| = 2 q_n l23, fp16-floor consequence l27); addendum a705-712; companion c384-396; review l55-84",
+      "resolution": "E[Z] = E[D] = 2^{-2 q_n}: 0.25 / 0.0625 / 2^-8 at q_n = 1 / 2 / 4",
+      "rule": "R1,R8"
+    },
+    {
+      "id": 3,
+      "topic": "constant in (4.7)/(4.9)",
+      "a": "spec l856, l926 factor 4; companion c406",
+      "b": "errata E-11 l151-155",
+      "resolution": "e/sqrt(p) first order; 2e/(2 sqrt p - e); certificate 2e/(2 sqrt D - e)",
+      "rule": "R1,R5"
+    },
+    {
+      "id": 4,
+      "topic": "amplification factor A",
+      "a": "spec l871 4/sqrt(p); addendum a708, a787-788 2^{q_n+1}",
+      "b": "errata E-11 l158, l165",
+      "resolution": "A = 1/sqrt(p); Haar factor 2^{q_n}",
+      "rule": "R1,R3"
+    },
+    {
+      "id": 5,
+      "topic": "inference D floors",
+      "a": "spec l1104-1108 two floors; review l81-83 (pre-E-11, 'median' meaning mean); addendum a708 (2^{q_n+1})",
+      "b": "errata E-11 l160-163; E-10 l145; E-1 l27",
+      "resolution": "single floor D >= 2^-6 both paths; fp32 fallback default for |K| >= 6 (q_n >= 3); at q_n = 2 the untrained mean E[D] = 2^-4 equals the superseded fp16-store floor",
+      "rule": "R1,R8"
+    },
+    {
+      "id": 6,
+      "topic": "Q1.15 tensordot narrowing",
+      "a": "spec l930; companion c412",
+      "b": "errata E-6 l77-87",
+      "resolution": "pre-scale S_q15 = 1 - 2^-15",
+      "rule": "R1,R5"
+    },
+    {
+      "id": 7,
+      "topic": "HVX sentence-per-lane coefficients",
+      "a": "spec l709-713; addendum a721; companion c480",
+      "b": "errata E-9 l100-124",
+      "resolution": "lane-varying vectors; peak 27-29 of 32; WS <= 11",
+      "rule": "R1,R3"
+    },
+    {
+      "id": 8,
+      "topic": "initialisation",
+      "a": "spec l1072 N(0,0.1^2) option",
+      "b": "errata E-10 l129",
+      "resolution": "uniform [0, 2 pi) only; >= 3 restarts",
+      "rule": "R1"
+    },
+    {
+      "id": 9,
+      "topic": "production parser",
+      "a": "spec l162-163, l176-179",
+      "b": "errata E-12; addendum 11.1",
+      "resolution": "chart (11.4)-(11.5); greedy = six-shape pre-check; a107 -> m^3/24",
+      "rule": "R1,R3"
+    },
+    {
+      "id": 10,
+      "topic": "slot rule and layout labels",
+      "a": "spec l258, l1163",
+      "b": "errata E-13",
+      "resolution": "one 8 B accumulator; Layout C only",
+      "rule": "R1"
+    },
+    {
+      "id": 11,
+      "topic": "barren-plateau exponent",
+      "a": "spec l1073 2^-W",
+      "b": "errata E-10 l133-136",
+      "resolution": "projector variance 2^{-2W}; normalised readout flat",
+      "rule": "R1"
+    },
+    {
+      "id": 12,
+      "topic": "SPSA variance",
+      "a": "spec l1051-1052",
+      "b": "errata E-2 l32",
+      "resolution": "sum_{j!=i} g_j^2 + sigma^2/(2c^2)",
+      "rule": "R1"
+    },
+    {
+      "id": 13,
+      "topic": "model memory row / no weight table",
+      "a": "spec l1148, l1172-1178; addendum a1560/1566/1657",
+      "b": "errata E-3, E-4, E-5",
+      "resolution": "angles 100,000 B are weights; records 200,032 B file only; resident 100-140 KB; claim = (b)+(c)",
+      "rule": "R1,R3"
+    },
+    {
+      "id": 14,
+      "topic": "training footprint 16 x P_total",
+      "a": "spec l1165",
+      "b": "errata E-3 l47",
+      "resolution": "96 KB at 6000; 800 KB at 50,000",
+      "rule": "R1"
+    },
+    {
+      "id": 15,
+      "topic": "fp16 stall T8",
+      "a": "spec l1281",
+      "b": "errata E-7 l89-93",
+      "resolution": "exact to 2048, stall from 2049",
+      "rule": "R1"
+    },
+    {
+      "id": 16,
+      "topic": "symbol D",
+      "a": "spec C9 l81",
+      "b": "errata E-1 l15; limits l526; addendum l186, l825",
+      "resolution": "C9 governs; qualify D_V, D_s, depth D, word D",
+      "rule": "R10"
+    },
+    {
+      "id": 17,
+      "topic": "symbol S",
+      "a": "spec l297, l846",
+      "b": "errata E-6; limits A2/HO.3/A5; addendum (14.10)",
+      "resolution": "S_q15, S(rho), S superop, S_k",
+      "rule": "R10"
+    },
+    {
+      "id": 18,
+      "topic": "symbol N",
+      "a": "spec C9 l84 N = 2^W",
+      "b": "addendum C17 l58 noun count",
+      "resolution": "N_nouns in DisCoCirc formulas",
+      "rule": "R10"
+    },
+    {
+      "id": 19,
+      "topic": "d vs d_n",
+      "a": "addendum l574, limits l15",
+      "b": "spec l343",
+      "resolution": "canonical d_n, d_s",
+      "rule": "R10"
+    },
+    {
+      "id": 20,
+      "topic": "Hermitian packing",
+      "a": "spec l347 upper",
+      "b": "limits LIM-11 l376 lower; full rho row-major elsewhere",
+      "resolution": "spec packing for stored objects; convert at kernel boundary",
+      "rule": "R2,R6"
+    },
+    {
+      "id": 21,
+      "topic": "ids C1..C27",
+      "a": "conventions",
+      "b": "limits Sec. 3 candidates",
+      "resolution": "bare Cn = convention; 'limits candidate Cn'",
+      "rule": "R10"
+    },
+    {
+      "id": 22,
+      "topic": "ids T1..T5 and T-series extent",
+      "a": "spec T1-T10, addendum T11-T24",
+      "b": "limits A1 T1-T5b; programme summary T11-T23",
+      "resolution": "canonical T1-T24 + T-EZ + errata checks; 'limits A1-Tn'",
+      "rule": "R10"
+    },
+    {
+      "id": 23,
+      "topic": "relative pronoun type",
+      "a": "spec l176 unlabelled",
+      "b": "addendum a169-170 (subject n^r n s^l n, cups (0,1)(4,5)(7,8)(3,6)(2,9), s at 10) and a171-172 (object n^r n n^{ll} s^l, cups (0,1)(5,6)(4,7)(3,8)(2,9), s at 10); review l292",
+      "resolution": "subject n^r n s^l n; object n^r n n^{ll} s^l; addendum governs; E-12 l186 fixes the test",
+      "rule": "R3"
+    },
+    {
+      "id": 24,
+      "topic": "sign_k and training circuit",
+      "a": "spec l1029 sign_k = -1",
+      "b": "addendum a537 sign_k = +1; limits NU.5",
+      "resolution": "scoped by form",
+      "rule": "R11"
+    },
+    {
+      "id": 25,
+      "topic": "root cotangent seed",
+      "a": "spec (5.8) = addendum (11.27')",
+      "b": "limits (G.9), A1 linear seed, A6 e_c, A8 (L.4)",
+      "resolution": "(5.8) for CE/MSE; limits seeds for their objectives",
+      "rule": "R6"
+    },
+    {
+      "id": 26,
+      "topic": "local 2q index m",
+      "a": "spec C6; addendum C17 pi",
+      "b": "limits HO.1 argument order",
+      "resolution": "m_phys reference; m_arg equal iff w[] ascending",
+      "rule": "R2,R6"
+    },
+    {
+      "id": 27,
+      "topic": "export type_sig extension",
+      "a": "companion c498",
+      "b": "addendum C15",
+      "resolution": "C15 governs linguistic profile; missing r, chi, readout, grammar version, checksum",
+      "rule": "R3,R5"
+    },
+    {
+      "id": 28,
+      "topic": "meaning of 'Correct'",
+      "a": "companion c944",
+      "b": "review l340-342",
+      "resolution": "corrects third-party review wording; baseline corrections = E-1..E-13",
+      "rule": "R4"
+    },
+    {
+      "id": 29,
+      "topic": "per-cup postselection factor",
+      "a": "spec C8, (1.4)",
+      "b": "limits l1123, l1563 4^{-q}",
+      "resolution": "exact 2^{-q} x Z; limits figure is Haar expectation",
+      "rule": "R12"
+    },
+    {
+      "id": 30,
+      "topic": "verify.c storage/eps",
+      "a": "spec C3, (1.7)",
+      "b": "verify.c l7, l39-40",
+      "resolution": "spec governs implementations",
+      "rule": "R8"
+    },
+    {
+      "id": 31,
+      "topic": "'IQP' label for Q = 1 nouns",
+      "a": "spec C10 l89",
+      "b": "verify.c l24",
+      "resolution": "C10 naming",
+      "rule": "R2"
+    },
+    {
+      "id": 32,
+      "topic": "companion governing status and scope",
+      "a": "companion c64, c132, Secs. 10-12.8, 14",
+      "b": "review l31-37, l148-175",
+      "resolution": "corrections memo + constraints; P0 committed; Secs. 10-12.8, 14 deferred",
+      "rule": "R4,R5"
+    },
+    {
+      "id": 33,
+      "topic": "fourteen open decisions",
+      "a": "companion c1027-1040",
+      "b": "review l166-170",
+      "resolution": "seven answered by baseline; seven gate nothing before R4",
+      "rule": "R4"
+    },
+    {
+      "id": 34,
+      "topic": "expressivity ceiling RV09 vs 12.2",
+      "a": "companion c956",
+      "b": "addendum a666-670; review l79-83",
+      "resolution": "addendum correct qualified to d << |V|",
+      "rule": "R3,R4"
+    },
+    {
+      "id": 35,
+      "topic": "Lorenz SPSA iterations",
+      "a": "limits l1257 100",
+      "b": "addendum a1460 500 sim / 100-130 hw",
+      "resolution": "addendum governs",
+      "rule": "R6"
+    },
+    {
+      "id": 36,
+      "topic": "tensordot working set count",
+      "a": "limits l1301 12/40 operands",
+      "b": "spec l254; addendum (12.11) 16/48 full, 10/36 in place",
+      "resolution": "budget with WS_full and WS_inplace; note addendum a241 / a1683 count N TV N and the relative clause as 14/44 (no second-noun term); state which count is quoted",
+      "rule": "R6"
+    },
+    {
+      "id": 37,
+      "topic": "matched-memory baselines",
+      "a": "addendum a1637 (V = 1e4/1000)",
+      "b": "review l557 (V = 64)",
+      "resolution": "both valid; P0 uses review's; state V",
+      "rule": "R8"
+    },
+    {
+      "id": 38,
+      "topic": "units of 100 KB model row",
+      "a": "spec l1148; addendum C14 l17",
+      "b": "errata/companion/review 100,000 B",
+      "resolution": "byte figure governs",
+      "rule": "R13"
+    },
+    {
+      "id": 39,
+      "topic": "addendum precision numbers with superseded factor",
+      "a": "addendum a708-709, T23",
+      "b": "errata E-11 factor 2^{q_n}",
+      "resolution": "recomputed 8e-3, 0.125, 1.25e-2, p_min 1.05e-4 -- UNVERIFIED",
+      "rule": "R8"
+    },
+    {
+      "id": 40,
+      "topic": "limits report existence",
+      "a": "review l6-7, l384 absent",
+      "b": "file on disk",
+      "resolution": "review stale",
+      "rule": "R7"
+    },
+    {
+      "id": 41,
+      "topic": "entropy log base and zero-eigenvalue guard",
+      "a": "limits A2 (SF.4), kernel l409: ln, clamp 1e-7f (nat)",
+      "b": "limits A4 (3)(d) l683-684: log2, guard 1e-15 (bits)",
+      "resolution": "fp32 kernels clamp lam <= 1e-7 (limits Sec. 2.2 (8)(iii) l473-474; T-W4 pass criteria l775-777); 1e-15 only in fp64 references; state bits or nats",
+      "rule": "R6,R9"
+    },
+    {
+      "id": 42,
+      "topic": "4x4 Jacobi cost",
+      "a": "limits A4 table l700 ~2000 flops, 32 fp32",
+      "b": "limits A2 (4) l413-418: 1,152 flops/sweep (1,728 with V) x 3 sweeps",
+      "resolution": "A2 governs (~3,456 without V; recomputed, UNVERIFIED as measured)",
+      "rule": "R6,R8"
+    }
+  ],
+  "numeric_reference": [
+    {
+      "quantity": "E[Z] Haar verb",
+      "value": "2^{-2 q_n}: 0.25 (1,1), 0.0625 (2,1), 2^-8 (4,2)",
+      "source": "errata l14",
+      "kind": "exact expectation"
+    },
+    {
+      "quantity": "sd(Z)",
+      "value": "0.144 / 0.042 / 0.0019",
+      "source": "errata l16",
+      "kind": "exact"
+    },
+    {
+      "quantity": "E[D] at uniform init / Haar words",
+      "value": "E[D] = E[Z] = 2^{-|K|} = 2^{-2 q_n} (|K| = 2 q_n for N TV N): 0.25 q_n = 1, 0.0625 q_n = 2, 2^-8 q_n = 4; D = C9 postselection denominator = Z in bent-wire form, not P_post (Haar 2^{-4 q_n}); at q_n = 2 equals the superseded fp16-store floor 2^-4; Haar Beta(2,30) ~59 % below 2^-4, ~8 % below 2^-6 (UNVERIFIED recomputation); IQP ansatz 0 53 % below 2^-6",
+      "source": "errata l13-27, l147; spec l967, s285",
+      "kind": "exact expectation"
+    },
+    {
+      "quantity": "old p_min thresholds (not D floors)",
+      "value": "spec s863-864 p_min 0.31 / 0.05 superseded by E-11 0.020 / 0.00328; 69 % of untrained (1,1) below 0.31, 47 % of (2,1) below 0.05",
+      "source": "errata l25-26, l157",
+      "kind": "threshold (superseded)"
+    },
+    {
+      "quantity": "Q1.15 stores",
+      "value": "gate path (4.5) sat_int16((acc + 2^13) >> 14), Rt8 = 14; tensordot path sat_int16((acc + 2^14) >> 15), Rt8 = 15",
+      "source": "spec l810, l658; spec l918",
+      "kind": "rule"
+    },
+    {
+      "quantity": "unit roundoffs",
+      "value": "fp32 2^-24; fp16 2^-11; bf16 2^-8; Q1.15 store 2^-16",
+      "source": "spec l82",
+      "kind": "exact"
+    },
+    {
+      "quantity": "per-gate constants c (4.2)",
+      "value": "fp16 2x2 10; 4x4 25; fp16-store/fp32 1; fp16 store + hf vectors 2.4",
+      "source": "spec l779",
+      "kind": "worst bound"
+    },
+    {
+      "quantity": "g_Q15(W)",
+      "value": "2^{W/2-15.5} + 8.6e-5: W=8 4.3e-4, 10 7.8e-4, 12 1.5e-3, 16 5.6e-3",
+      "source": "spec l815",
+      "kind": "worst bound"
+    },
+    {
+      "quantity": "angle quantisation",
+      "value": "4.8e-5 rad per gate",
+      "source": "spec l41",
+      "kind": "exact"
+    },
+    {
+      "quantity": "amplification A",
+      "value": "1/sqrt(p_surv) first order (3.16 at 0.1); Haar-init factor 2^{q_n}",
+      "source": "errata l158, l165",
+      "kind": "worst bound"
+    },
+    {
+      "quantity": "probability error bound",
+      "value": "e/sqrt(p) first order; 2e/(2 sqrt p - e) all orders; certificate 2e/(2 sqrt D - e) iff sqrt D > e",
+      "source": "errata l151-153",
+      "kind": "worst bound"
+    },
+    {
+      "quantity": "p_min",
+      "value": "0.020 (pure fp16 Ng = 50); 0.00328 (Q1.15 W = 10); addendum 1.6e-3 predates E-11 (E-11 form 1.05e-4 UNVERIFIED)",
+      "source": "errata l157; addendum a709",
+      "kind": "threshold"
+    },
+    {
+      "quantity": "Q1.15 tensordot worst ||delta sigma||",
+      "value": "1.96e-4 (1,1), 3.0e-4 (2,1) with pre-scale; 2.38e-4 / 3.33e-4 without",
+      "source": "spec l933; errata l82",
+      "kind": "worst bound"
+    },
+    {
+      "quantity": "Q1.15 tensordot |delta P_c|",
+      "value": "5.2e-4 at Z = 0.1403; 1.57e-3 at 2^-6 (1,1); 2.4e-3 at 2^-6 (2,1); typical 4.2e-4; circuit form 2.8e-3",
+      "source": "errata l159",
+      "kind": "worst bound (typical = estimate)"
+    },
+    {
+      "quantity": "fp16-store tensordot at D = 2^-6",
+      "value": "0.0197 (passes 0.05); tight floor 2^-8.6; typical 0.0051",
+      "source": "errata l160",
+      "kind": "worst bound"
+    },
+    {
+      "quantity": "inference D floor",
+      "value": "2^-6 both paths; fp32 fallback below",
+      "source": "errata l161",
+      "kind": "rule"
+    },
+    {
+      "quantity": "fp16 accumulation",
+      "value": "exact to 2048 terms of 2^-11; stall from 2049; 2^-12 series stalls at 0.5",
+      "source": "errata l89-91",
+      "kind": "exact"
+    },
+    {
+      "quantity": "Sec. 4.6 Ng_max (E <= 0.01, A = 2, worst/typ)",
+      "value": "fp32 8333/>1e6; fp16-store 10/318; pure fp16 1/26; Q1.15 W=8 11/567, W=10 6/152, W=12 3/39, W=16 0/2; right-hand columns ~4x under E-11 UNVERIFIED",
+      "source": "spec l875-888; errata l158",
+      "kind": "bound/estimate"
+    },
+    {
+      "quantity": "sincos",
+      "value": "Taylor deg 7/8 <= 3.2e-7 / 4e-8; deg 5/6 fails 2^-15; 257-entry Q2.14 table 514 B; E-9 sweep 3.074e-5 vs 3.052e-5 + 3.1e-7 (tolerance UNVERIFIED)",
+      "source": "spec l836; review l195",
+      "kind": "bound/measured-fp64"
+    },
+    {
+      "quantity": "guards",
+      "value": "Z_min 1e-12; eps 1e-9; eps_D 1e-7; clip 1; S_tol 1e-6; entropy clamp lam <= 1e-7 in fp32 (1e-15 of limits A4 (3)(d) is fp64-only)",
+      "source": "spec l217, l334, l968; addendum l1287; limits l473-474 (rule), l409 (kernel)",
+      "kind": "rule"
+    },
+    {
+      "quantity": "memory tiers",
+      "value": "REGISTER ~1 KB / 4 KB; VTCM 8 KB slice (8 MB v73+); SMEM 48 KB static, 99-227 KB dynamic, Adreno 32 KB",
+      "source": "addendum l17-21; spec l518-526, l637",
+      "kind": "facts (UNVERIFIED per SoC)"
+    },
+    {
+      "quantity": "tensordot working set (1,1)/(2,1)",
+      "value": "WS_full 16/48 amps = 128/384 B fp32, 64/192 B fp16-Q15; in place 10/36 = 80/288 B, 40/144 B",
+      "source": "spec l254, l1154; addendum (12.11)",
+      "kind": "exact"
+    },
+    {
+      "quantity": "(4,2) working set",
+      "value": "1,120 amps = 8.75 KiB fp32; in place 1,040 = 8,320 B; (8,2) verb 2 MiB",
+      "source": "addendum l690; companion c372; review l205",
+      "kind": "exact"
+    },
+    {
+      "quantity": "relative clause / coordination peaks",
+      "value": "relative clause (subject or object) 14 (10) amps at (1,1) = 112 (80) B fp32 / 56 (40) B fp16-Q15; 44 (36) at (2,1) = 352 (288) B / 176 (144) B; order t1[a,c] = sum_b V[a,c,b] Bob[b], t2[a] = sum_c t1[a,c], t2 *= Alice, sigma[s] = sum_a t2[a] IV[a,s]; who/whom tensors 0 B; coordination 6/12; two relative clauses 16/48 (12/40); 4-cycle 24/80; streaming 20/80; counting convention: conflict 36",
+      "source": "addendum a239-244, a1682-1683, a1689, a1701, a1756-1757, l277, l387, l398",
+      "kind": "exact"
+    },
+    {
+      "quantity": "tree adjoint M_train",
+      "value": "400 B (T12 sentence, 50 amps); 1.7 KB (20 words at (2,1), 220 amps, UNVERIFIED mean 2^{q_out} = 4)",
+      "source": "addendum l545-548",
+      "kind": "exact/estimate"
+    },
+    {
+      "quantity": "circuit training memory 24 x 2^W",
+      "value": "W=3 192 B; W=5 768 B; W=11 48 KB; uncompacted Sec. 11 sentences up to 0.75-24 GB for 20 words (2,1)",
+      "source": "spec l1040; addendum l433-440",
+      "kind": "exact"
+    },
+    {
+      "quantity": "S(W)",
+      "value": "W=6 512/256 B; 8 2/1 KB; 10 8/4 KB; 11 16/8 KB; 12 32/16 KB; 14 128/64 KB",
+      "source": "spec l1168",
+      "kind": "exact"
+    },
+    {
+      "quantity": "chart parser memory",
+      "value": "1.375 m^2 B: m=256 90,112 B; m=92 11,638 B; steps (m-1)(m+1)(m+3)/24",
+      "source": "addendum l105; errata l180",
+      "kind": "exact"
+    },
+    {
+      "quantity": "E-13 scratch rows",
+      "value": "HVX coefficient vectors 3 KB/2.5 KB (optional); vdelta 640 B; per-gate vectors 3 x 128 B; butterfly temps 16/32 B; Layout C 128 B (+~2 KB training); word ids 6-12 B; bucket program bytes UNQUANTIFIED",
+      "source": "errata l195-197",
+      "kind": "exact/open"
+    },
+    {
+      "quantity": "DisCoCirc exact text memory",
+      "value": "2^{N q_n} complex; N=8 q_n=1 2 KB/1 KB; N=12 32/16 KB; q_n=2: N=2 128/64 B, N=3 512/256 B, N=4 2/1 KB, N=5 8/4 KB, N=8 512/256 KB; per-wire RDM 128 B accumulator at q_n=2 (64 B packed fp32, <= 400 B with Jacobi); all 3 RDMs at (2,1) 1,920 FMA, 228 B; ceilings N q_n <= 9/10 (8 KB), 12/13 Adreno, 13-14/15 SMEM, 19/20 (8 MB)",
+      "source": "addendum l964, l975, l1229-1236, l1403; limits l418-421, l703-705",
+      "kind": "exact"
+    },
+    {
+      "quantity": "MPS break-even and capped counts",
+      "value": "N >= 9/11/13/15 for chi 4/8/16/32; 32 nouns chi=16 101-128 KB + 16 KB scratch; chi <= 4 under 8 KB",
+      "source": "addendum l1340-1345",
+      "kind": "exact"
+    },
+    {
+      "quantity": "doubled register",
+      "value": "8 (4^W + d^2) B: W=4 2.2 KB, W=7 128 KB; ceilings thread W=3, HVX/VTCM W=4, Adreno W=5, SMEM W=7",
+      "source": "limits l258-262",
+      "kind": "exact (advisory)"
+    },
+    {
+      "quantity": "CUDA Layout A registers",
+      "value": "(1,1) ~52 regs; (2,1) ~110-128 -> <= 512 threads/block; Q <= 6",
+      "source": "spec l536-540; addendum l718",
+      "kind": "target (ptxas)"
+    },
+    {
+      "quantity": "HVX sentence-per-lane registers",
+      "value": "24 tensordot, 27 CRz, 28-29 Rx butterfly (31 worst) of 32; WS <= 11; coefficient generation ~36 DV/64 angles/gate (ESTIMATE)",
+      "source": "errata l108-110 (counts), l112-113 (coefficient generation), l121-123 (WS <= 11)",
+      "kind": "target/estimate"
+    },
+    {
+      "quantity": "parameter counts",
+      "value": "Q=1 word 3 (Ry-only 1); IQP L(Q-1); Sim15 2QL; Sim14 4QL; Ry-only Q; V=1000 (600 N, 250 TV, 100 ADJ, 50 IV) L=1 Sim14 6000, IQP 2450; IQP L=2 3100 (UNVERIFIED recomputation); (1,1) IQP L=2 per class N 3, ADJ 2, IV 2, TV 4, ADV 2 (sum 13, addendum a914); (1, q_s=3) IQP L=2 N 3, ADJ 2, IV 6, TV 8, ADV 10 (addendum a1553-1555); P0 Model A 176, Model B 320",
+      "source": "spec l90-99, l1062; addendum a914, a1553-1555; review l551",
+      "kind": "exact"
+    },
+    {
+      "quantity": "export sizes",
+      "value": "header 32 B; record 20 B (@0 word_id u32, @4 type_sig u8[6], @10 n_qubits u8, @11 ansatz_id u8, @12 P_w u16, @14 param_offset u32, @18 reserved u16); angle table @ 32 + 20 V, 2/4 B per angle; header version value not stated in spec l1115 (UNVERIFIED; bridge assumes 1); V=1000 (1,1) L=1 Sim14 32,032 B (44,032 pairs), IQP 24,932 B (29,832 pairs); IQP L=2 26,232 B (32,432 pairs, UNVERIFIED recomputation); V=1e4 P_w=5 file 300,032/400,032 B; angles 100,000/200,000 B; resident = angle table + 0 or 4 B/word, 100-140 KB at V=1e4",
+      "source": "spec l1113-1134; errata l42-43, l70-73; review l111; verify_export_bytes.c",
+      "kind": "exact"
+    },
+    {
+      "quantity": "training footprint 16 x P_total",
+      "value": "96 KB at 6000; 800 KB at 50,000",
+      "source": "errata l47",
+      "kind": "exact"
+    },
+    {
+      "quantity": "generator block",
+      "value": "808 B ((1,1) IQP L=2 m=32); 3,440 B with recurrent; 120,052 B ((5,2) Sim14 L=2 m=384)",
+      "source": "addendum l1150",
+      "kind": "exact"
+    },
+    {
+      "quantity": "worked example",
+      "value": "sigma = [-0.02640234-0.28465252i, 0.08196341-0.22764750i]; Z = 0.14026553; p = [0.58263882, 0.41736118]; Loss 0.54018780/0.87380330; P_post(Bell) 0.03506638; k(0.8) = 4172; Ng 11 unfused / 7 fused",
+      "source": "spec l1209-1235; verify.c",
+      "kind": "exact"
+    },
+    {
+      "quantity": "P0 sizes",
+      "value": "1,190,592 sentences; Model A 352 B angles, peak 16 amps (128 B fp32 / 64 B Q1.15); Model B 640 B, 52 amps (416/208 B); B1 528 B, B2 46.2 KB, B3 28.6 KB",
+      "source": "review l549-558",
+      "kind": "exact"
+    },
+    {
+      "quantity": "recomputed under E-11 (UNVERIFIED)",
+      "value": "addendum a708-709: fp16-store 8e-3 (q_n=4), 0.125 (q_n=8); Q1.15 (4,2) W=10 1.25e-2; p_min 1.05e-4",
+      "source": "this bridge Sec. 9",
+      "kind": "UNVERIFIED recomputation"
+    }
+  ],
+  "unverified": [
+    {
+      "group": "A lambeq/DisCoPy conventions",
+      "items": "theta = 2 pi phase; CRz form; IQP closing H; Sim14/15 ring order; nested cups; symbol order",
+      "sources": "spec l45, l76, l87, l99, l1293; addendum l1927",
+      "closing_test": "numerical comparison of one exported Rz, CRz, IQP and Sim15 word against T4/T5 before weight import"
+    },
+    {
+      "group": "B HVX facts",
+      "items": "unit counts, DV occupancy, vdelta bytes, lane order, shuffles, fp16 rounding/subnormals, contexts, VTCM per SoC/retention, ~36 DV coefficient cost, (4,1)/(3,3) residency, divide cost, mixer ops",
+      "sources": "spec l636-705, l1297; errata l111, l121; addendum l1914",
+      "closing_test": "T9 + E-9 extension on a named part/toolchain with measured fl(a*b), controls, cycles"
+    },
+    {
+      "group": "C HMX / Cloud AI 100",
+      "items": "fp16 tile generation, accumulation width, ISA reachability, tile layouts, vector unit width, int16/fp32 support, tensor-core accumulation",
+      "sources": "spec l731-739, l1302-1304; addendum l1080; limits l328, l1186",
+      "closing_test": "one 32x32 fp16 tile multiply vs fp64 on device"
+    },
+    {
+      "group": "D Adreno",
+      "items": "wave 64/128, ~16 regs per fibre, fp16 rate, native trig accuracy, local bandwidth",
+      "sources": "spec l743-747, l1305; addendum l728",
+      "closing_test": "compiler occupancy report + T6 in fp16 storage"
+    },
+    {
+      "group": "E CUDA",
+      "items": "cc 10.x/12.0 smem maxima, shuffle throughput, tensor-core accumulation, all register counts",
+      "sources": "spec l1307; addendum C14",
+      "closing_test": "ptxas -v 0 spills on P0 kernels; T6 at 1024 threads/block"
+    },
+    {
+      "group": "F error-model status",
+      "items": "typical columns are estimates; projector variance and flat readout variance measured once; 5 % local minima once; FTZ device-dependent; E-9 T9 tolerance unfixed; Sec. 4.6 right-hand columns and addendum a708-709/T23 not retabulated",
+      "sources": "spec l1309; errata l134-141; review l227-245",
+      "closing_test": "re-run bp.c/second/bp_mc.c with new seeds; retabulate with errata_numbers.c; erratum fixing T9 tolerance"
+    },
+    {
+      "group": "G open design choices",
+      "items": "L; real-only; nested cups; ansatz_id 5; L saturating SO/SU(d^2); L_sat sufficiency beyond Q <= 3; eigenvector reach",
+      "sources": "spec l1311; addendum l586, l1017, l1201-1203",
+      "closing_test": "rank checks derivF/sym.c at Q = 4,5; define ansatz 5 with a test"
+    },
+    {
+      "group": "H grammar/front-end statistics",
+      "items": "m ~ 2.3 x words; cycle 25-27 %; greedy failure 46-58 % (CFG only); W_train 25-30; mean 2^{q_out} = 4; tagger and coreference accuracy; 'inner step' meaning",
+      "sources": "addendum l1907, l1918; errata l188",
+      "closing_test": "genE.c statistics on natural text; tagger/coreference on a public set"
+    },
+    {
+      "group": "I hybrid front end",
+      "items": "B = 2^15 bucket accuracy; mixer ~250 HVX ops; raw-byte floor; q_n = 4..6; encoder sizes",
+      "sources": "addendum l928, l939, l948, l1038, l1096, l1920",
+      "closing_test": "15.4 plan: head over frozen encoder vs linear probe"
+    },
+    {
+      "group": "J literature",
+      "items": "all figures from memory/snippets (Lorenz except qnlp.txt-checked rows, Meichanetzidis, Duneau 108->20, Laakkonen BQP, COGS/SCAN, bert-tiny, QGT, S1-S17, Bechet, Reck/Clements, fuzz/phaser/Proj/neg forms, Acharya)",
+      "sources": "addendum l1450-1548, l1901; review Sec. 8; limits l1602-1675",
+      "closing_test": "fetch and cite when network available; never quote as fact until then"
+    },
+    {
+      "group": "K training-dependent Z",
+      "items": "whether training raises Z above 2^{-2 q_n}; E[Z] with pretrained/low-rank init; qudit E[Z] = 1/d_n^2 not re-run",
+      "sources": "addendum l1922; limits l1218, l1286",
+      "closing_test": "D histograms per epoch in P0 and a (4,2) run; ez_mc.c with qudit generator"
+    },
+    {
+      "group": "L evaluation outcomes",
+      "items": "all 15.4 expected outcomes; P0 thresholds; retrieval saturation; q_n = 2 threshold",
+      "sources": "addendum l1643, l1658; review l561-563",
+      "closing_test": "P0 with 5 seeds; report falsifiers"
+    },
+    {
+      "group": "M limits specifics",
+      "items": "Stinespring gradient path not run; HMX tiles >= 16x16; Gauss 3M precision; MPS tangent inexactness; Ragone variance; JL/PCA retention; coherent superposition semantics; switch gate sets",
+      "sources": "limits l319-330, l469-479, l613-624, l782-792, l939-951, l1082-1099, l1217-1224, l1356-1367, l1461-1466",
+      "closing_test": "extend the named programs per caveat"
+    },
+    {
+      "group": "N companion open items",
+      "items": "no implementation/accuracy/energy result; verify.c covers Sec. 8 only; ratings subjective; SAP API availability; Liquid DisCoCat novelty; one-command reproduction absent; 14 open decisions (7 answered by baseline)",
+      "sources": "companion l8, l77, l104, l476, l533, l855, l897, l1027-1040; review l166-170",
+      "closing_test": "P0 report; rest deferred"
+    },
+    {
+      "group": "O document-set hygiene",
+      "items": "addendum edits owed by errata/review not applied on disk; exact line for 'a1657' (a1653 also carries wording); review 'limits absent' stale; verify.c residual digits platform-dependent; M_PI needs _GNU_SOURCE under strict C99",
+      "sources": "this bridge Sec. 10 O",
+      "closing_test": "addendum revision with new hash pin (Sec. 12 procedure)"
+    },
+    {
+      "group": "P pure-mathematics open items",
+      "items": "puremath Appendix B items 1-37: Conjectures 1.26, 1.30, 2.34, 7.13; crossing-cup counting hardness; backtracking lower bound; m ~ 2.3 x words; reference cup pairing; DisCoCirc gate set; qudit analogues; ring order / closing H; Reck/Clements; IQP mean Z 0.041 at (2,1); training raising Z; ratio-estimator bias; wrapper back edges; treewidth; inexact SVD tangents; sampling constant; W_train growth; best product approximation; last two gradients of Alice sleeps and dreams; no barren plateau for normalised readout; saddle beyond (1,1)/(2,1); Lie-algebraic variance; table bound 6.03e-5; FTZ; L_k bounds; multi-sentence amplification; numerically verified algorithms; numerical ranks; q_n = 4..6 heuristic; attributions; addendum 15.3 figures",
+      "sources": "puremath Appendix B",
+      "closing_test": "proof appended to puremath, or a program in D/ plus the owning engineering document; delivery-relevant items tracked as dsdm risks PM-*"
+    },
+    {
+      "group": "Q delivery-plan assumptions",
+      "items": "capacity 10 ideal days per timebox (engineer 6.0, agents 4.0); size-class estimates 160.5 ideal days (89.0 Must); 38-week nominal duration, 46-week judgement range; 3-5 person scaling durations; operational definition of matches in P0 falsifier F4; working-set measurement protocol for F3",
+      "sources": "dsdm Secs. 2.4, 5.4, 10",
+      "closing_test": "measured velocity in dsdm Timebox Review Records TB1-TB2 (FND-08); dsdm gate G0 record for the two protocol decisions"
+    }
+  ],
+  "gaps": [
+    "G1 cross-document symbol table (only in bridge)",
+    "G2 header field for ring order / closing H",
+    "G3 ansatz_id 5 undefined",
+    "G4 binary encoding of cups[]/tree[]/G2F/G1F/ctrl",
+    "G5 no nested-cup test at q >= 2",
+    "G6 two objects named wire_map",
+    "G7 single packed-Hermitian layout",
+    "G8 mixed real/complex words",
+    "G9 T9 extension tolerance",
+    "G10 assertion-based one-command harness; T2/T16/T17/T20/T22 have no program; T3 CRx not coded; no (2,1) relative-clause numeric vector exists",
+    "G11 eps for fidelity readouts",
+    "G12 canonical parameter order for tree/DisCoCirc forms",
+    "G13 canonical qubit numbering for Sec. 11 circuit form",
+    "G14 canonical test list T1-T24 + T-EZ",
+    "G15 addendum hash pin (pinned here)",
+    "G16 export representation of imported-weight conventions",
+    "G17 spec l176 not labelled subject-relative (grammar procedure names n^r n s^l n, a169, explicitly)",
+    "G18 tractability-contract record per profile",
+    "G19 export fields r, chi, readout, grammar version, checksum; profile registry",
+    "G20 output status record layout",
+    "G21 Sec. 16 rows: system overhead, traffic, string table; peak vs steady; bucket program bytes",
+    "G22 un-applied addendum/companion edits",
+    "G23 evidence labels mapping (nothing Measured)",
+    "G24 device measurements; MCU/no-FPU/1 mW profiles",
+    "G25 P0 artefacts",
+    "G26 parser scores for w_p",
+    "G27 declared invariances per profile",
+    "G28 recomputation under E-11 (a709, T23, 14.2 table, Sec. 4.6 right columns)",
+    "G29 deployed-profile acceptance tolerance",
+    "G30 sum-vs-Frobenius aggregation mandate for record profiles",
+    "G31 HVX layout and residency for (1, q_s = 3) (P0 Model B) unspecified: spec 3.2 gives sentence-per-lane (1,1) and amplitude-per-lane (2,1) only; review verifies HVX residency for (1,1) only (raised by dsdm Appendix A; closed by dsdm QC-12 in TB7)"
+  ],
+  "deferred": [
+    "companion Secs. 10-12.8 (accounting, ACDOCA, I2P, distributed coordination) and Sec. 14 (temporal/CfC) with R4, R5, R8, RV16-24, RV34-41, RV43-60",
+    "companion 13.4 profiles other than P0",
+    "limits Tables A/B themes (gated on P0 and companion c450 ablation)",
+    "addendum Secs. 13.3, 13.6, 14.5-14.7, 15.3(c)-(e) applications beyond the evaluation plan"
+  ],
+  "procedures": [
+    {
+      "task": "implement a kernel",
+      "steps": [
+        "read spec Sec. 0 with errata E-8; spec 2.1-2.6; spec 1.3 with E-6, E-13 for the tensordot; spec 2.3 for cups; addendum C16 + 11.4 for node ops; addendum C17 + 14.1 for DisCoCirc gates; if the kernel targets a device or a non-fp32 format ALSO apply 'change a number format' and 'extend to a new hardware target' (errata E-9, E-11; spec 3.2, 4.3, 4.7 incl. tensordot store l918) -- worked route in the next entry",
+        "apply C1, C3, C4, C6 bit-test gates, C7, C8; E-13 slot rule (one 8 B accumulator); flip masks for X only; descending removal of postselected qubits; tag each gate with its form (R11)",
+        "run T1, T2 (write it), T3, T5, T6 (a)-(d), T12/T13/T22 for node ops, T20 / limits T-W4 for DisCoCirc gates; fp32 within 1e-6",
+        "record ptxas/register report as a target (C14); no document update"
+      ]
+    },
+    {
+      "task": "HVX sentence-per-lane Q1.15 (1,1) fused tensordot (bridge 8.1a)",
+      "steps": [
+        "read spec 1.3 l225-267 + errata E-6 l77-87 + E-13 l194-204; spec 4.3 l799-829, 4.7 l902-956 (store l918) + E-11 l149-165; spec 3.2 l633-720 with l709-713 replaced by E-9 l100-124; addendum a721 read as WS <= 11; review 2.4 l131-154, 2.6 l170-200",
+        "apply register budget E-9 l108-110 (24 tensordot / 27 CRz / 28-29 Rx of 32; WS 10 <= 11); lane-varying Q2.14 coefficient vectors (3 per rotation gate); pre-scale S_q15; Q2.30 accumulate, store sat_int16((acc + 2^14) >> 15), vasr Rt8 = 15 (NOT gate-path >> 14); Q1.15 preferred over fp16-store for the tensordot at (1,1)/(2,1) on accuracy (spec l949-950 with E-11; E-9 l115-116); single D floor 2^-6 with fp32 fallback; certificate 2e/(2 sqrt D - e)",
+        "run T1, T2 (write), T3, T5, T6(b), T8 incl. verQ15/q15_tensordot.c sweep, T9 + E-9 extension, T23 mean-Z part",
+        "record register/spill report as a C14 target; nothing normative"
+      ]
+    },
+    {
+      "task": "add a grammar construction",
+      "steps": [
+        "read addendum 11.1-11.5, 11.7; errata E-12; spec 1.1 (pre-check only); C15 type codes; C16 limits; relative-clause line map: types a169-172, who (11.10) a208, whom (11.11) a209, (11.14)-(11.15) a219-220, order and peak a239-244, node ops a346-347, W_hw a418-425, W_train a433, tree-adjoint spider rules a528-532, M_train a545-548, Sec. 16 a1682-1685, a1689, a1701, Sec. 17 a1756-1757, tests T11 a1826, T12 a1830-1839, T13 a1840, T18 a1864, T22 a1876, T24(b)/(e) a1883-1886, a1894-1895",
+        "apply type string over {N,S,I,Q}; verify cups/survivor with the chart; ansatz per C10 or 0xFE; peak by (11.18') vs Sec. 16 tier; mark wrappers/chains; compute W_hw (11.23) and W_train (11.23'); subject relative n^r n s^l n (a169), object relative n^r n n^{ll} s^l (a171), both 0xFE spiders evaluated by index equality (who = delta[a,b,d] eps[c], order [n^r, n, s^l, n]); peak 14 (10) / 44 (36), counting per conflict 36",
+        "run T11 (+ new row), T12-T14 analogues by brute force, T18, T22, T24-style FD check, E-12 regression; T12 is (1,1) only and T22 has no program: generate a (2,1) brute-force reference",
+        "update addendum 11.2 table, Sec. 16 row, Sec. 18 test; C15 version bump if a header field is needed; log in bridge Sec. 12"
+      ]
+    },
+    {
+      "task": "change a number format",
+      "steps": [
+        "read spec Sec. 4; errata E-6, E-7, E-8, E-11 (E-9 for HVX); spec 6.2 corrected; addendum 12.3; limits Sec. 2.2 (8)(iii) l473-474 for entropies",
+        "apply S_q15 pre-scale only; round-half-up saturating store: (4.5) l810 >> 14 on the gate path, spec l918 >> 15 on the tensordot path; fp32/int32 accumulation; never renormalise; D floor 2^-6 with fp32 fallback; report D with certificate; FTZ check; circuit-form format choice per Sec. 4.6 reading (Q1.15 W <= 9); tensordot: Q1.15 preferred over fp16-store at (1,1)/(2,1) (spec l949-950 with E-11; E-9)",
+        "run T8 all parts, T23, T9 on HVX, verQ15/q15_tensordot.c sweep",
+        "append an erratum if a bound changes; recompute Sec. 4.6 right columns and label UNVERIFIED"
+      ]
+    },
+    {
+      "task": "export a model",
+      "steps": [
+        "read spec 6.3 l1111-1139 with E-3, E-5; addendum C15, 13.7; spec C5, 5.6; T10, T19; for an NPU target also spec 6.2 l1100-1110 with E-11 l160-163 (single floor 2^-6, certificate) and spec 4.4 l830-843 (cos/sin from k) or flags.bit0 = 1",
+        "precedence: spec 6.3 + errata govern (R1); C15 governs type_sig/version extension (conflict 27, R3); companion 9.3 c486-498 is constraints only (R4, R5); unmet fields = gap G19 (review l402)",
+        "apply header fields and word-record offsets (bridge Sec. 3.4; spec l1118-1129); flags bits 0-3; ansatz_id overrides 0xFF/0xFE; type_sig codes with 0xFF terminator, <= 6 atoms; param_offset 0xFFFFFFFF = generate; k = round(theta/(4 pi) 65536) mod 65536 from unwrapped fp32; Q15 pairs round(cos phi x 32767); loader checks; record ring order/closing H in notes (G2)",
+        "run T10, E-5 offset test, T19, verify_export_bytes.c sizes",
+        "propose C15 version bump for r, chi, readout, grammar version, checksum; log in bridge Sec. 12"
+      ]
+    },
+    {
+      "task": "train a model",
+      "steps": [
+        "read spec 5.1-5.6 with E-2, E-10; spec 6.1; spec 5.3 (circuit form) or addendum 11.7 (tree); addendum 13.4 for generators; review Sec. 7 (P0); limits A6 for second order",
+        "apply uniform [0, 2 pi) init, fixed seed, >= 3 restarts; occurrence-order parameter vector; sign_k -1 (circuit) / +1 (tree); adjoint on unfused list; (5.8) seed, eps_D 1e-7, clip 1; Adam (5.9), unwrapped fp32 theta; log D histogram and clip rate; fp32; SPSA only without adjoint",
+        "run T7, T24 (a)-(e), E-10 tests, T-EZ, P0 thresholds with 5 seeds",
+        "record P0 result and falsifiers; addendum 15.4 item 5 outcomes; negative results (companion 16.3)"
+      ]
+    },
+    {
+      "task": "answer a numeric question",
+      "steps": [
+        "locate the quantity in bridge Sec. 9 and any conflict row in Sec. 2.2; check the errata for the spec line",
+        "apply R8 precedence: verify_c > errata > review > addendum > limits > spec > companion; state bound/estimate/expectation and counting convention",
+        "run the reference program named in Sec. 7 or the review program list; else say 'recomputed here'",
+        "label UNVERIFIED if derived from a superseded constant or a hardware figure without measurement"
+      ]
+    },
+    {
+      "task": "extend to a new hardware target",
+      "steps": [
+        "read spec Sec. 3, Sec. 10 items 2-6; errata E-9, E-13; addendum C14, 12.3, 14.1, Sec. 16 tiers; limits Sec. 4; companion CP-25",
+        "apply layout choice (thread-per-sentence tensordot; warp/block circuit; HVX lane layouts); tensordot MANDATORY on Adreno; matrix units only for fused blocks 2^m >= 32; no probability sums on tensor cores/fp16; batch by (shape, W) or tree signature; lane-varying coefficients (E-9); C14 tiers",
+        "run T9 bring-up, E-9 sweep, T6/T12 in device format at spec tolerances, register/spill report, measured state bytes",
+        "add a dated 'measured on <device, toolchain>' record; move settled UNVERIFIED items; propose errata for wrong Sec. 3 facts"
+      ]
+    },
+    {
+      "task": "add an RDM / spectral readout (bridge 8.9)",
+      "steps": [
+        "read addendum C17 l58-70, (14.19) l1402-1403 (128 B accumulator at q_n = 2), (14.19') l1405-1415; limits A2 Sec. 2.2 (SF.1) l379-380, (SF.3), (SF.4), (4) l413-425, (8)(iii) l473-474; limits A4 Sec. 2.4 (3)(c) l675-678, (4) l691-705, (5) l708-720; addendum l1229-1236 for state memory",
+        "apply fp32 accumulation (C12); rho ket row / bra column; divide by Tr rho; d = 2 closed form, d = 4 Jacobi 3 sweeps (A2 cost governs, conflict 42); clamp lam <= 1e-7 before the log (conflict 41); state bits or nats",
+        "run T-W4 (cc -O2 critic2/extra.c -lm; fp32 within 1e-6; dense == gate-by-gate), T-W3 (ptrace/ptrace2.c), T-SF1..T-SF4 (spec/spec_test.c, jacobi.c), T20 (write it)",
+        "nothing normative (limits advisory, R6); record working set vs limits l419-421 as a C14 target"
+      ]
+    },
+    {
+      "task": "propose a spec change (errata process)",
+      "steps": [
+        "read errata header l1-9 and Sec. B; review Sec. 2 for the derivation standard",
+        "apply: baseline byte-identical (hash 7408d5b7...efe86c pinned); write E-14.. in the errata format keyed to sNNN (and aNNN); state correction vs clarification; state verify.c impact; name the program in D/; propagate consequences to every dependent line; append, never edit in place",
+        "run the new program plus every touched test; independent second pass in a fresh folder (second/ convention)",
+        "update errata file (append), bridge Secs. 2.2, 9, 10, manifest (conflicts, numeric_reference, unverified, documents[] errata sha256, version bump); if the addendum is edited re-pin its hash and re-check every aNNN citation"
+      ]
+    }
+  ],
+  "forthcoming": {
+    "puremath": "REGISTERED in 1.2.0 (2026-09-24): documents[] row with sha256 0254d2b1...1996; precedence R14; supports conflict rows 2, 3, 4, 8, 9, 12, 15; UNVERIFIED group P",
+    "dsdm": "REGISTERED in 1.2.0 (2026-09-24) as qnlp_dsdm_delivery_plan.md (not qnlp_dsdm_sprint_plan.md): documents[] row with sha256 3e2b0ba0...f9ce; precedence R14 (schedule, priority, acceptance sequencing only); UNVERIFIED group Q; gap G31",
+    "superseded": "1.1.0 placeholder sha256 (64 zeros) for puremath and dsdm; expected file name qnlp_dsdm_sprint_plan.md",
+    "update_procedure": "sha256sum + wc -lc; replace row in bridge Sec. 1 and documents[]; bump version; assign precedence; index labels/symbols/tests; scan Sec. 2.2 conflicts; add UNVERIFIED items and gaps; re-run jq; re-issue bridge with old hashes under 'superseded'"
+  }
+}
