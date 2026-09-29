@@ -72,7 +72,8 @@ int  uaf_cid_release(struct uaf_cid_table *t, uint16_t cid, uint64_t *wr_id);
  * indistinguishable from a completion whose status is UAF_OK (0) -- v2.0 had
  * no phase tag at all, so DST polling could not be implemented. */
 struct uaf_cr_state {
-    struct uaf_storage_cqe *base;
+    struct uaf_storage_cqe *base;   /* the device ring image */
+    struct uaf_cid_table   *cids;   /* resolves cmd_id -> the caller's wr_id */
     uint32_t depth;          /* power of two */
     uint32_t head;
     uint8_t  expected_phase; /* starts at 1 */
@@ -80,13 +81,46 @@ struct uaf_cr_state {
 };
 
 int uaf_cr_init(struct uaf_cr_state *cr, struct uaf_storage_cqe *base,
-                uint32_t depth);
+                uint32_t depth, struct uaf_cid_table *cids);
+
+/* [R-6.3-003] The consumer SHALL read `phase` with ACQUIRE semantics. Reading
+ * it and then reading the body in program order is not enough: on AArch64 the
+ * body loads may be satisfied before the phase load. v2.1 required a release
+ * store on the producer and gave the consumer no matching acquire, on the very
+ * path the phase tag exists to make safe. */
+static inline uint8_t uaf_cqe_load_phase(const struct uaf_storage_cqe *e)
+{
+#if defined(__GNUC__)
+    return __atomic_load_n(&e->phase, __ATOMIC_ACQUIRE) & UAF_CQE_PHASE_MASK;
+#else
+    uint8_t p = e->phase;
+    atomic_thread_fence(memory_order_acquire);
+    return p & UAF_CQE_PHASE_MASK;
+#endif
+}
+
 /* Returns the number of completions copied to out[0..max-1], 0 if none were
- * ready, or a negative enum uaf_error. Never returns UAF_ERR_CQ_EMPTY. */
-int uaf_cr_poll(struct uaf_cr_state *cr, int max, struct uaf_storage_cqe *out);
+ * ready, or a negative enum uaf_error. Fills the PUBLIC host completion, whose
+ * wr_id is the caller's full 64-bit value ([R-6.5-001]). */
+int uaf_cr_poll(struct uaf_cr_state *cr, int max, struct uaf_storage_wc *out);
 /* Producer side, for tests and for software backends. */
 void uaf_cr_post(struct uaf_cr_state *cr, uint32_t slot, uint16_t cmd_id,
                  int16_t status, uint32_t bytes, uint32_t latency_ns,
                  uint8_t phase);
+
+/* ---- NVMe completion status mapping (Section 6.7) ---------------------
+ * [R-6.7-001] An NVMe status field SHALL be mapped to an enum uaf_error. v2.1
+ * specified the opcode and NLB mapping and left completion status unmapped, so
+ * a DST implementation could submit a command and had no defined way to report
+ * why it failed.
+ *
+ * `sct` is the Status Code Type (CDW3 bits 27..25) and `sc` the Status Code
+ * (CDW3 bits 24..17) of the NVMe completion. */
+#define UAF_NVME_SCT_GENERIC   0x0
+#define UAF_NVME_SCT_CMD_SPEC  0x1
+#define UAF_NVME_SCT_MEDIA     0x2
+#define UAF_NVME_SCT_PATH      0x3
+
+int uaf_dst_status_to_uaf(uint8_t sct, uint8_t sc);
 
 #endif /* UAF_DST_H */

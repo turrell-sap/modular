@@ -84,13 +84,14 @@ int uaf_cid_release(struct uaf_cid_table *t, uint16_t cid, uint64_t *wr_id)
 }
 
 int uaf_cr_init(struct uaf_cr_state *cr, struct uaf_storage_cqe *base,
-                uint32_t depth)
+                uint32_t depth, struct uaf_cid_table *cids)
 {
     if (!cr || !base || !UAF_IS_POW2(depth)) return UAF_ERR_INVAL;
     /* [R-6.3-002] The ring base MUST be UAF_CQE_ALIGN-aligned. */
     if ((uintptr_t)base & (UAF_CQE_ALIGN - 1u)) return UAF_ERR_INVAL;
     memset(base, 0, (size_t)depth * sizeof(*base));
     cr->base = base;
+    cr->cids = cids;
     cr->depth = depth;
     cr->head = 0u;
     cr->expected_phase = 1u;          /* [R-6.3-001] */
@@ -109,24 +110,79 @@ void uaf_cr_post(struct uaf_cr_state *cr, uint32_t slot, uint16_t cmd_id,
     e->latency_ns = latency_ns;
     e->reserved0 = 0u;
     e->reserved1 = 0u;
-    /* phase is released last, after the body is visible. */
+    /* phase is released last, after the body is visible ([R-6.3-002]). */
+#if defined(__GNUC__)
+    __atomic_store_n(&e->phase, (uint8_t)(phase & UAF_CQE_PHASE_MASK),
+                     __ATOMIC_RELEASE);
+#else
     atomic_thread_fence(memory_order_release);
     e->phase = (uint8_t)(phase & UAF_CQE_PHASE_MASK);
+#endif
 }
 
-int uaf_cr_poll(struct uaf_cr_state *cr, int max, struct uaf_storage_cqe *out)
+int uaf_cr_poll(struct uaf_cr_state *cr, int max, struct uaf_storage_wc *out)
 {
     if (!cr || !cr->base || !out || max < 0) return UAF_ERR_INVAL;
     int n = 0;
     while (n < max) {
         struct uaf_storage_cqe *e = &cr->base[cr->head & (cr->depth - 1u)];
-        uint8_t ph = e->phase & UAF_CQE_PHASE_MASK;
-        if (ph != cr->expected_phase) break;      /* nothing new */
-        atomic_thread_fence(memory_order_acquire);
-        out[n++] = *e;
+        if (uaf_cqe_load_phase(e) != cr->expected_phase) break;  /* acquire */
+
+        uint64_t wr_id = 0u;
+        if (cr->cids) {
+            /* [R-6.5-001] restore the caller's full 64-bit identifier */
+            int rc = uaf_cid_release(cr->cids, e->cmd_id, &wr_id);
+            if (rc != UAF_OK) return rc;   /* [R-6.5-003] unknown cmd_id */
+        } else {
+            wr_id = e->cmd_id;
+        }
+        out[n].wr_id             = wr_id;
+        out[n].status            = e->status;
+        out[n].bytes_transferred = e->bytes_transferred;
+        out[n].latency_ns        = e->latency_ns;
+        out[n].reserved0         = 0u;
+        n++;
+
         cr->head++;
         if ((cr->head & (cr->depth - 1u)) == 0u)
             cr->expected_phase ^= 1u;             /* flip on wrap */
     }
     return n;   /* 0 means empty, never an error code */
+}
+
+int uaf_dst_status_to_uaf(uint8_t sct, uint8_t sc)
+{
+    if (sct == UAF_NVME_SCT_GENERIC && sc == 0x00) return UAF_OK;
+    switch (sct) {
+    case UAF_NVME_SCT_GENERIC:
+        switch (sc) {
+        case 0x01: return UAF_ERR_INVAL;         /* Invalid Command Opcode   */
+        case 0x02: return UAF_ERR_INVAL;         /* Invalid Field in Command */
+        case 0x03: return UAF_ERR_PROTO;         /* Command ID Conflict      */
+        case 0x04: return UAF_ERR_REMOTE;        /* Data Transfer Error      */
+        case 0x06: return UAF_ERR_REMOTE;        /* Internal Error           */
+        case 0x07: return UAF_ERR_BUSY;          /* Command Abort Requested  */
+        case 0x0B: return UAF_ERR_MR_FAULT;      /* Invalid PRP Offset       */
+        case 0x0D: return UAF_ERR_MR_FAULT;      /* Invalid SGL Descriptor   */
+        case 0x80: return UAF_ERR_MR_FAULT;      /* LBA Out of Range         */
+        case 0x81: return UAF_ERR_NOMEM;         /* Capacity Exceeded        */
+        case 0x82: return UAF_ERR_NODEV;         /* Namespace Not Ready      */
+        default:   return UAF_ERR_REMOTE;
+        }
+    case UAF_NVME_SCT_CMD_SPEC:
+        return (sc == 0x1E) ? UAF_ERR_PERM : UAF_ERR_INVAL;
+    case UAF_NVME_SCT_MEDIA:
+        switch (sc) {
+        case 0x81: return UAF_ERR_CRC;           /* Data Transfer Guard Check */
+        case 0x82: return UAF_ERR_CRC;           /* Guard Check Error         */
+        case 0x83: return UAF_ERR_CRC;           /* Application Tag Check     */
+        case 0x84: return UAF_ERR_CRC;           /* Reference Tag Check       */
+        case 0x86: return UAF_ERR_PERM;          /* Access Denied             */
+        default:   return UAF_ERR_REMOTE;        /* unrecovered media error   */
+        }
+    case UAF_NVME_SCT_PATH:
+        return UAF_ERR_TIMEOUT;
+    default:
+        return UAF_ERR_REMOTE;
+    }
 }

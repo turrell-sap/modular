@@ -7,8 +7,15 @@
  *       differs between ILP32 and LP64 Snapdragon userspace; v2.0 used both.
  *   R2. Every such struct is pinned by a _Static_assert on its size, so any
  *       layout drift is a compile error rather than a field-offset bug.
- *   R3. Structs that an application passes in and the library may extend
- *       carry `struct_size` as their first field, set by the caller.
+ *   R3. A CONFIGURATION or QUERY struct the application fills and the library
+ *       may later extend carries `struct_size` as its first field, set by the
+ *       caller: uaf_mr_t, uaf_qp_init_attr, uaf_qp_attr, uaf_device_attr,
+ *       uaf_conn_info, uaf_peer_info, uaf_storage_cmd. A PER-OPERATION struct
+ *       on the hot path does NOT: uaf_sge, uaf_wr, uaf_wc, uaf_storage_cqe,
+ *       uaf_storage_wc. Their layout is fixed for the life of an ABI major
+ *       version and pinned by assertion, so a per-call size field would cost a
+ *       branch on every work request and buy nothing. v2.1 applied the field
+ *       unevenly and did not say which rule it was following.
  *   R4. No struct in this header is a wire format. Wire formats are byte
  *       arrays with explicit offsets; see uaf_wire.h.
  */
@@ -63,7 +70,12 @@ enum uaf_wire_opcode {
     UAF_OP_CM_RTU           = 0x82,
     UAF_OP_CM_REJ           = 0x83,
     UAF_OP_ACK              = 0x90,
-    UAF_OP_NAK              = 0x91, /* expected PSN in imm_data */
+    /* v2.1 had a single NAK (0x91) whose imm_data was already committed to
+     * the expected PSN, while [R-5.6-006] also required a NAK-RNR. One
+     * opcode cannot encode both. */
+    UAF_OP_NAK_SEQ          = 0x91, /* out of sequence; expected PSN in imm_data */
+    UAF_OP_NAK_RNR          = 0x92, /* responder not ready; no receive buffer  */
+    UAF_OP_NAK_INVAL        = 0x93, /* malformed request, e.g. misaligned atomic */
 };
 
 enum uaf_mr_flags {
@@ -130,6 +142,24 @@ enum uaf_device_cap {
     UAF_CAP_REG_ANY_MEM    = (1ULL << 6),
     UAF_CAP_SYNC_FAULT     = (1ULL << 7), /* MAP_SYNC honoured (UAF-D)     */
     UAF_CAP_HW_CC          = (1ULL << 8), /* congestion control offloaded  */
+    /* Bit 9 is reserved. v2.1 referenced a UAF_CAP_MT_POST that was in no
+     * enum and had no defined ring discipline (OI-5). Rings are strictly
+     * single-producer, single-consumer; a multi-producer discipline needs a
+     * compare-and-swap protocol that a later revision may define. */
+    UAF_CAP_RESERVED_9     = (1ULL << 9),
+};
+
+/* Connection-manager reject reasons. v2.1 used UAF_CM_REASON_CLOSE and
+ * assigned it no value. */
+enum uaf_cm_reason {
+    UAF_CM_REASON_CLOSE          = 0x00, /* orderly disconnect */
+    UAF_CM_REASON_NO_QP          = 0x01,
+    UAF_CM_REASON_MTU_MISMATCH   = 0x02,
+    UAF_CM_REASON_PROFILE        = 0x03,
+    UAF_CM_REASON_AUTH           = 0x04,
+    UAF_CM_REASON_RESOURCE       = 0x05,
+    UAF_CM_REASON_STALE_CONN     = 0x06,
+    UAF_CM_REASON_SIMUL_OPEN     = 0x07, /* lost the tie-break of R-5.5-009 */
 };
 
 /* ---- Memory region ---------------------------------------------------- */
@@ -199,10 +229,10 @@ _Static_assert(sizeof(struct uaf_wc) == 40, "uaf_wc layout is ABI");
 
 /* create_qp() in v2.0 took only two CQs: no queue depth, no SGE limit, no
  * queue-pair type, so two implementations would allocate differently. */
-enum uaf_qp_type {
-    UAF_QPT_RC = 1,  /* reliable connected; the only type v2.1 requires */
-    UAF_QPT_UD = 2,  /* OPTIONAL, capability-gated */
-};
+/* Reliable connected is the only type v2.1.1 defines. An unreliable
+ * datagram type was declared in v2.1 and never specified (OI-4); the
+ * enumerator is withdrawn rather than left as a hole. */
+enum uaf_qp_type { UAF_QPT_RC = 1 };
 
 struct uaf_qp_init_attr {
     uint32_t struct_size;
@@ -369,5 +399,20 @@ _Static_assert(offsetof(struct uaf_storage_cqe, phase) == 15,
                "phase MUST be the last byte written");
 
 #define UAF_CQE_PHASE_MASK  0x01U
+
+/* The 16-byte entry above is the DEVICE RING IMAGE. What an application
+ * receives from uaf_storage_poll() is this host completion, which carries the
+ * caller's full 64-bit wr_id. v2.1 required the library to restore wr_id
+ * ([R-6.5-001]) while giving uaf_storage_poll() only the 16-byte image, whose
+ * sole identifier is a 16-bit cmd_id -- the requirement had nowhere to land. */
+struct uaf_storage_wc {
+    uint64_t wr_id;
+    int32_t  status;            /* enum uaf_error */
+    uint32_t bytes_transferred;
+    uint32_t latency_ns;
+    uint32_t reserved0;
+};
+_Static_assert(sizeof(struct uaf_storage_wc) == 24,
+               "uaf_storage_wc layout is ABI");
 
 #endif /* UAF_TYPES_H */

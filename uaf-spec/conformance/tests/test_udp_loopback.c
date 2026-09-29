@@ -53,7 +53,7 @@ static int rx_packet(struct responder *R, const uint8_t *pkt, size_t n)
 
     uint64_t va = h.remote_va + h.seg_off;
     rc = uaf_key_validate(&R->keys, h.rkey, R->qp_num, va, h.seg_len,
-                          UAF_MR_REMOTE_WRITE);
+                          UAF_MR_REMOTE_WRITE, 1 /* authenticated */);
     if (rc != UAF_OK) { R->rkey_failures++; return rc; }
 
     memcpy(R->target + (va - R->base), payload, h.seg_len);
@@ -107,6 +107,7 @@ int main(void)
     uint32_t lkey = 0, rkey = 0;
     CHECK_EQ_I(uaf_key_register(&R.keys, R.base, R.len, UAF_MR_REMOTE_WRITE,
                                R.qp_num, &lkey, &rkey), UAF_OK);
+    (void)lkey;
 
     CASE("segment, send, receive, reassemble");
     uint32_t nseg = uaf_wire_seg_count(MSG_BYTES, TEST_MTU);

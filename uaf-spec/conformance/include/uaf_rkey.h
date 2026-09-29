@@ -12,9 +12,10 @@
  * [R-11.2-003] An rkey is bound to (domain, queue pair, base, length) and to
  *              a generation. A request presenting a valid rkey on a QP it was
  *              not issued for MUST fail with UAF_ERR_RKEY.
- * [R-11.2-004] After UAF_RKEY_FAIL_MAX consecutive validation failures a QP
- *              MUST move to UAF_QPS_ERR. A 32-bit key space is otherwise
- *              exhaustible in seconds at 400 Gbps.
+ * [R-11.2-004] After UAF_RKEY_FAIL_MAX consecutive failures -- counted only
+ *              for packets that passed the link authenticator -- the responder
+ *              MUST throttle validation on that QP to one attempt per
+ *              UAF_RKEY_THROTTLE_NS. It MUST NOT change queue-pair state.
  * [R-11.2-005] Deregistration MUST increment the generation so a stale rkey
  *              can never match a later registration.
  */
@@ -52,12 +53,16 @@ int  uaf_key_register(struct uaf_key_table *t, uint64_t base, uint64_t length,
 int  uaf_key_deregister(struct uaf_key_table *t, uint32_t rkey);
 
 /* Validates rkey for [va, va+len) with `want` access from qp_num.
- * Returns UAF_OK, UAF_ERR_RKEY, UAF_ERR_PERM or UAF_ERR_MR_FAULT. On
- * UAF_ERR_RKEY the table's failure counter advances; uaf_key_should_err()
- * reports when the QP must be moved to ERR. */
+ * `authenticated` states whether the packet passed the link authenticator;
+ * only an authenticated failure may advance the counter, so an off-path
+ * attacker cannot drive the responder into throttling either.
+ * Returns UAF_OK, UAF_ERR_RKEY, UAF_ERR_PERM or UAF_ERR_MR_FAULT. */
 int  uaf_key_validate(struct uaf_key_table *t, uint32_t rkey, uint32_t qp_num,
-                      uint64_t va, uint64_t len, uint64_t want);
-int  uaf_key_should_err(const struct uaf_key_table *t);
+                      uint64_t va, uint64_t len, uint64_t want,
+                      int authenticated);
+/* True once validation on this QP must be rate-limited. Never a reason to
+ * change queue-pair state. */
+int  uaf_key_should_throttle(const struct uaf_key_table *t);
 void uaf_key_reset_failures(struct uaf_key_table *t);
 
 #endif

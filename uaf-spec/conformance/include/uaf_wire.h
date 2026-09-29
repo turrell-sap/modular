@@ -61,6 +61,50 @@
 /* hdr_crc32c covers everything ahead of it. */
 #define UAF_HDR_CRC_COVER  48
 
+/* ---- ACK scheduling (Section 5.6) ------------------------------------
+ * [R-5.6-008] A sender SHALL set UAF_WIRE_FLAG_ACK_REQ on the LAST segment of
+ * every message and at least once every UAF_ACK_REQ_INTERVAL segments.
+ * [R-5.6-009] A receiver SHALL emit an ACK on any segment carrying ACK_REQ,
+ * and otherwise within UAF_ACK_COALESCE_NS of receiving in-order data. */
+#define UAF_ACK_REQ_INTERVAL   (UAF_WINDOW_DEFAULT / 2)   /* 128 segments */
+#define UAF_ACK_COALESCE_NS    25000ULL                   /* 25 us        */
+
+/* ---- CM packet sizes (Section 5.5) -----------------------------------
+ * v2.1 required seg_len == 96 for every CM packet while its own diagram showed
+ * CM_RTU carrying an authenticator only. */
+#define UAF_CM_RECORD_SIZE  64
+#define UAF_CM_AUTH_SIZE    32
+#define UAF_CM_REQ_LEN      (UAF_CM_RECORD_SIZE + UAF_CM_AUTH_SIZE)  /* 96 */
+#define UAF_CM_REP_LEN      (UAF_CM_RECORD_SIZE + UAF_CM_AUTH_SIZE)  /* 96 */
+#define UAF_CM_RTU_LEN      (UAF_CM_AUTH_SIZE)                       /* 32 */
+#define UAF_CM_REJ_LEN      (UAF_CM_AUTH_SIZE)                       /* 32 */
+/* Returns the required seg_len for a CM opcode, or 0 if not a CM opcode. */
+uint32_t uaf_cm_expected_len(uint8_t opcode);
+
+/* ---- Endpoint identity and simultaneous open (Section 5.5) -----------
+ * [R-5.5-009] v2.1 broke the tie by comparing (dest_ip, dest_udp_port,
+ * qp_num). Each side's destination is the other side, so the two peers
+ * compared different tuples and could both remain active or both go passive.
+ * The tie-break is now a total order over a canonical 22-byte identity, and
+ * both peers evaluate the same two identities in the same order. */
+#define UAF_EID_SIZE  22   /* addr[16] || udp_port(2) || qp_num(4), all BE */
+
+struct uaf_endpoint_id {
+    uint8_t  addr[16];   /* IPv6, or IPv4-mapped; Profile A uses the GID */
+    uint16_t udp_port;   /* 0 under Profile A */
+    uint32_t qp_num;
+};
+
+void uaf_eid_serialize(const struct uaf_endpoint_id *e,
+                       uint8_t out[UAF_EID_SIZE]);
+/* Strict total order: <0, 0 or >0, by memcmp of the serialized identities. */
+int  uaf_eid_compare(const struct uaf_endpoint_id *a,
+                     const struct uaf_endpoint_id *b);
+/* Returns 1 if `local` continues as the active side, 0 if it becomes passive.
+ * Symmetric by construction: both peers get complementary answers. */
+int  uaf_cm_is_active(const struct uaf_endpoint_id *local,
+                      const struct uaf_endpoint_id *remote);
+
 /* Profile A (IB transport) carries a 24-bit PSN. A Profile B sender that
  * may be bridged to Profile A MUST keep psn within 24 bits. */
 #define UAF_PSN_MASK_IBV   0x00FFFFFFU

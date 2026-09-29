@@ -72,7 +72,8 @@ int uaf_key_deregister(struct uaf_key_table *t, uint32_t rkey)
 }
 
 int uaf_key_validate(struct uaf_key_table *t, uint32_t rkey, uint32_t qp_num,
-                     uint64_t va, uint64_t len, uint64_t want)
+                     uint64_t va, uint64_t len, uint64_t want,
+                     int authenticated)
 {
     if (!t || !t->ent) return UAF_ERR_INVAL;
     for (uint32_t i = 0; i < t->depth; i++) {
@@ -80,7 +81,7 @@ int uaf_key_validate(struct uaf_key_table *t, uint32_t rkey, uint32_t qp_num,
         if (!e->valid || e->rkey != rkey) continue;
         /* [R-11.2-003] bound to the QP it was issued for */
         if (e->qp_num != 0u && e->qp_num != qp_num) {
-            t->fail_count++;
+            if (authenticated) t->fail_count++;      /* [R-11.2-004] */
             return UAF_ERR_RKEY;
         }
         if ((e->access & want) != want) return UAF_ERR_PERM;
@@ -89,11 +90,11 @@ int uaf_key_validate(struct uaf_key_table *t, uint32_t rkey, uint32_t qp_num,
         t->fail_count = 0u;
         return UAF_OK;
     }
-    t->fail_count++;                     /* [R-11.2-004] */
+    if (authenticated) t->fail_count++;  /* [R-11.2-004] */
     return UAF_ERR_RKEY;
 }
 
-int uaf_key_should_err(const struct uaf_key_table *t)
+int uaf_key_should_throttle(const struct uaf_key_table *t)
 { return t && t->fail_count >= UAF_RKEY_FAIL_MAX; }
 
 void uaf_key_reset_failures(struct uaf_key_table *t)

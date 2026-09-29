@@ -58,7 +58,11 @@
 #define UAF_WIRE_FLAG_ACK_REQ   (1U << 3)
 #define UAF_WIRE_FLAG_DATA_CRC  (1U << 4) /* data_crc32c field is valid */
 #define UAF_WIRE_FLAG_RETRY     (1U << 5) /* this is a retransmission */
-#define UAF_WIRE_FLAG_RESERVED  0xFFC0U   /* MUST be zero on transmit */
+/* Set on an ACK to reflect that CE-marked data arrived in the interval the ACK
+ * covers. v2.1 told the receiver to reflect IP ECN CE "in the next ACK" and
+ * gave the ACK no field or flag able to carry it. */
+#define UAF_WIRE_FLAG_ECN_ECHO  (1U << 6)
+#define UAF_WIRE_FLAG_RESERVED  0xFF80U   /* MUST be zero on transmit */
 
 /* ---- Reliability (NORMATIVE, Section 5.6) ------------------------------
  * v2.0 specified a 100 ms base RTO in a fabric targeting 1.5 us, and a
@@ -76,10 +80,15 @@
                 + (uint64_t)(seg) - 1u) / (uint64_t)(seg))
 
 /* ---- Security (NORMATIVE, Section 11) --------------------------------- */
-/* Consecutive rkey validation failures tolerated on one QP before it MUST
- * be moved to UAF_QPS_ERR. Bounds a brute-force search that would otherwise
- * cover the 32-bit rkey space in seconds at 400 Gbps. */
+/* Consecutive rkey validation failures on one QP, counted ONLY for packets
+ * that passed the link authenticator, after which the responder MUST throttle
+ * validation on that QP. It MUST NOT change queue-pair state: v2.1 moved the
+ * QP to UAF_QPS_ERR here, which handed any host able to reach the UDP port an
+ * off-path kill in exactly 16 datagrams and contradicted [R-5.7-001]. */
 #define UAF_RKEY_FAIL_MAX       16
+/* Minimum interval between rkey validations once throttling is engaged. At
+ * this rate the 2^32 key space takes over a century to search. */
+#define UAF_RKEY_THROTTLE_NS    1000000ULL   /* 1 ms */
 #define UAF_CM_NONCE_BYTES      8
 #define UAF_CM_MAC_BYTES        16  /* HMAC-SHA256 truncated to 128 bits */
 #define UAF_CM_REPLAY_WINDOW_NS 2000000000ULL /* 2 s */

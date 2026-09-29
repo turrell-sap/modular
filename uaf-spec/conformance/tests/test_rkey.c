@@ -31,48 +31,59 @@ int main(void)
 
     CASE("valid access inside bounds");
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100000u, 4096u,
-                                UAF_MR_REMOTE_WRITE), UAF_OK);
+                                UAF_MR_REMOTE_WRITE, 1), UAF_OK);
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100800u, 8u,
-                                UAF_MR_REMOTE_WRITE), UAF_OK);
+                                UAF_MR_REMOTE_WRITE, 1), UAF_OK);
 
     CASE("out-of-bounds is MR_FAULT");
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100000u, 4097u,
-                                UAF_MR_REMOTE_WRITE), UAF_ERR_MR_FAULT);
+                                UAF_MR_REMOTE_WRITE, 1), UAF_ERR_MR_FAULT);
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x0FFFFFu, 8u,
-                                UAF_MR_REMOTE_WRITE), UAF_ERR_MR_FAULT);
+                                UAF_MR_REMOTE_WRITE, 1), UAF_ERR_MR_FAULT);
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100FFCu, 8u,
-                                UAF_MR_REMOTE_WRITE), UAF_ERR_MR_FAULT);
+                                UAF_MR_REMOTE_WRITE, 1), UAF_ERR_MR_FAULT);
 
     CASE("access flags are enforced");
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100000u, 8u,
-                                UAF_MR_ATOMIC), UAF_ERR_PERM);
+                                UAF_MR_ATOMIC, 1), UAF_ERR_PERM);
 
     CASE("an rkey presented on the wrong QP fails");
     CHECK_EQ_I(uaf_key_validate(&t, rk, 9u, 0x100000u, 8u,
-                                UAF_MR_REMOTE_WRITE), UAF_ERR_RKEY);
+                                UAF_MR_REMOTE_WRITE, 1), UAF_ERR_RKEY);
 
     CASE("unknown rkey fails and advances the failure counter");
     uaf_key_reset_failures(&t);
     CHECK_EQ_I(uaf_key_validate(&t, 0xA5A5A5A5u, 7u, 0x100000u, 8u,
-                                UAF_MR_REMOTE_WRITE), UAF_ERR_RKEY);
-    CHECK(!uaf_key_should_err(&t));
+                                UAF_MR_REMOTE_WRITE, 1), UAF_ERR_RKEY);
+    CHECK(!uaf_key_should_throttle(&t));
 
-    CASE("brute force trips the failure limit and the QP must go to ERR");
+    CASE("authenticated brute force engages throttling");
     uaf_key_reset_failures(&t);
     for (unsigned i = 0; i < UAF_RKEY_FAIL_MAX; i++)
         (void)uaf_key_validate(&t, 0xDEAD0000u + i, 7u, 0x100000u, 8u,
-                               UAF_MR_REMOTE_WRITE);
-    CHECK(uaf_key_should_err(&t));
+                               UAF_MR_REMOTE_WRITE, 1);
+    CHECK(uaf_key_should_throttle(&t));
+
+    CASE("UNauthenticated failures never engage throttling");
+    /* v2.1 moved the QP to UAF_QPS_ERR after 16 failures, so any host able to
+     * reach the UDP port could kill a connection with 16 datagrams -- which
+     * contradicted [R-5.7-001]. An off-path attacker must not even be able to
+     * drive the responder into rate-limiting itself. */
+    uaf_key_reset_failures(&t);
+    for (unsigned i = 0; i < UAF_RKEY_FAIL_MAX * 4u; i++)
+        (void)uaf_key_validate(&t, 0xBEEF0000u + i, 7u, 0x100000u, 8u,
+                               UAF_MR_REMOTE_WRITE, 0);
+    CHECK(!uaf_key_should_throttle(&t));
 
     CASE("a success clears the failure counter");
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100000u, 8u,
-                                UAF_MR_REMOTE_WRITE), UAF_OK);
-    CHECK(!uaf_key_should_err(&t));
+                                UAF_MR_REMOTE_WRITE, 1), UAF_OK);
+    CHECK(!uaf_key_should_throttle(&t));
 
     CASE("deregistration invalidates the key");
     CHECK_EQ_I(uaf_key_deregister(&t, rk), UAF_OK);
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100000u, 8u,
-                                UAF_MR_REMOTE_WRITE), UAF_ERR_RKEY);
+                                UAF_MR_REMOTE_WRITE, 1), UAF_ERR_RKEY);
     CHECK_EQ_I(uaf_key_deregister(&t, rk), UAF_ERR_RKEY);
 
     uaf_key_table_fini(&t);

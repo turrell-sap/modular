@@ -20,6 +20,7 @@ int main(void)
     CHECK_EQ_U(sizeof(struct uaf_peer_info), 40);
     CHECK_EQ_U(sizeof(struct uaf_storage_cmd), 56);
     CHECK_EQ_U(sizeof(struct uaf_storage_cqe), 16);
+    CHECK_EQ_U(sizeof(struct uaf_storage_wc), 24);
 
     CASE("CQE is not packed and phase is the last byte");
     CHECK_EQ_U(_Alignof(struct uaf_storage_cqe), 4);
@@ -28,6 +29,13 @@ int main(void)
     CHECK_EQ_U(offsetof(struct uaf_storage_cqe, status), 2);
     CHECK_EQ_U(offsetof(struct uaf_storage_cqe, bytes_transferred), 4);
     CHECK_EQ_U(offsetof(struct uaf_storage_cqe, latency_ns), 8);
+
+    CASE("the public storage completion carries a full 64-bit wr_id");
+    /* v2.1 required the library to restore the caller's wr_id while giving
+     * uaf_storage_poll() only the 16-byte ring image, whose sole identifier is
+     * a 16-bit cmd_id. The requirement had nowhere to land. */
+    CHECK_EQ_U(sizeof(((struct uaf_storage_wc *)0)->wr_id), 8);
+    CHECK_EQ_U(offsetof(struct uaf_storage_wc, wr_id), 0);
 
     CASE("no size_t or pointer-width field in a pinned struct");
     /* uaf_storage_cmd.buf_len was size_t in v2.0: ILP32 vs LP64 divergence. */
@@ -58,6 +66,18 @@ int main(void)
      * and did not fit a 4 KiB path MTU. */
     CHECK_EQ_U(UAF_WIRE_MAX_SEG(4096), 4096 - 64);
     CHECK_EQ_U(UAF_WIRE_SEG_DEFAULT, 4032);
+
+    CASE("CM packet lengths and the endpoint identity");
+    CHECK_EQ_U(UAF_CM_RECORD_SIZE, 64);
+    CHECK_EQ_U(UAF_CM_AUTH_SIZE, 32);
+    CHECK_EQ_U(UAF_CM_REQ_LEN, 96);
+    CHECK_EQ_U(UAF_CM_RTU_LEN, 32);   /* authenticator only, not 96 */
+    CHECK_EQ_U(UAF_EID_SIZE, 22);
+
+    CASE("the reserved flag mask leaves room for ECN echo");
+    CHECK_EQ_U(UAF_WIRE_FLAG_ECN_ECHO, 1u << 6);
+    CHECK_EQ_U(UAF_WIRE_FLAG_RESERVED, 0xFF80u);
+    CHECK_EQ_U(UAF_WIRE_FLAG_ECN_ECHO & UAF_WIRE_FLAG_RESERVED, 0u);
 
     CASE("connection wire form is 64 bytes with no holes");
     CHECK_EQ_U(UAF_CONN_WIRE_SIZE, 64);

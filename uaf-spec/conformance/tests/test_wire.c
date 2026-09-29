@@ -63,13 +63,33 @@ int main(void)
 
     CASE("CM and ACK/NAK opcodes are defined and encodable");
     const uint8_t ops[] = { UAF_OP_CM_REQ, UAF_OP_CM_REP, UAF_OP_CM_RTU,
-                            UAF_OP_CM_REJ, UAF_OP_ACK, UAF_OP_NAK,
+                            UAF_OP_CM_REJ, UAF_OP_ACK,
+                            UAF_OP_NAK_SEQ, UAF_OP_NAK_RNR, UAF_OP_NAK_INVAL,
                             UAF_OP_RDMA_READ_RESP };
     for (unsigned i = 0; i < sizeof(ops); i++) {
         h = base_hdr(); h.opcode = ops[i];
         CHECK_EQ_I(uaf_wire_hdr_encode(&h, buf, NULL), UAF_OK);
         CHECK_EQ_I(uaf_wire_hdr_decode(buf, &g), UAF_OK);
     }
+
+    CASE("the three NAK reasons are distinct opcodes");
+    /* v2.1 had one NAK whose imm_data was already committed to the expected
+     * PSN, while [R-5.6-006] also required a NAK-RNR. One opcode cannot carry
+     * both. */
+    CHECK(UAF_OP_NAK_SEQ != UAF_OP_NAK_RNR);
+    CHECK(UAF_OP_NAK_RNR != UAF_OP_NAK_INVAL);
+    CHECK_EQ_U(UAF_OP_NAK_SEQ, 0x91u);
+
+    CASE("an ACK can echo ECN CE");
+    h = base_hdr(); h.opcode = UAF_OP_ACK;
+    h.flags = UAF_WIRE_FLAG_ECN_ECHO; h.msg_len = 0u; h.seg_len = 0u;
+    CHECK_EQ_I(uaf_wire_hdr_encode(&h, buf, NULL), UAF_OK);
+    CHECK_EQ_I(uaf_wire_hdr_decode(buf, &g), UAF_OK);
+    CHECK(g.flags & UAF_WIRE_FLAG_ECN_ECHO);
+
+    CASE("bit 7 and above are still reserved");
+    h = base_hdr(); h.flags = 1u << 7;
+    CHECK_EQ_I(uaf_wire_hdr_encode(&h, buf, NULL), UAF_ERR_INVAL);
 
     CASE("segment that overruns its message is rejected");
     h = base_hdr(); h.msg_len = 10u; h.seg_off = 8u; h.seg_len = 8u;

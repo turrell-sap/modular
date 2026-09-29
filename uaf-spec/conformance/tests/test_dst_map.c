@@ -73,6 +73,24 @@ int main(void)
     CHECK_EQ_I(uaf_cid_release(&t, ca, &got), UAF_ERR_PROTO);
     CHECK_EQ_I(uaf_cid_release(&t, 60000u, &got), UAF_ERR_PROTO);
 
+    CASE("NVMe completion status maps onto uaf_error");
+    /* v2.1 mapped opcodes and NLB and left completion status unmapped, so a
+     * DST implementation could submit a command and had no defined way to
+     * report why it failed. */
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_GENERIC, 0x00), UAF_OK);
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_GENERIC, 0x02), UAF_ERR_INVAL);
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_GENERIC, 0x80),
+               UAF_ERR_MR_FAULT);                       /* LBA out of range */
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_GENERIC, 0x0B),
+               UAF_ERR_MR_FAULT);                       /* invalid PRP offset */
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_MEDIA, 0x82), UAF_ERR_CRC);
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_MEDIA, 0x86), UAF_ERR_PERM);
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_PATH, 0x01), UAF_ERR_TIMEOUT);
+    /* Every unmapped code must still be a failure, never a silent success. */
+    for (unsigned sct = 0; sct < 8u; sct++)
+        for (unsigned sc = 1; sc < 256u; sc++)
+            CHECK(uaf_dst_status_to_uaf((uint8_t)sct, (uint8_t)sc) < 0);
+
     CASE("the table reports BUSY instead of reusing a live cmd_id");
     for (uint32_t i = 0; i < 256u; i++) {
         uint16_t c;

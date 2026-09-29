@@ -14,7 +14,8 @@ static int wire_opcode_valid(uint8_t op)
     case UAF_OP_RDMA_READ_RESP: case UAF_OP_ATOMIC_ACK:
     case UAF_OP_CM_REQ: case UAF_OP_CM_REP:
     case UAF_OP_CM_RTU: case UAF_OP_CM_REJ:
-    case UAF_OP_ACK: case UAF_OP_NAK:
+    case UAF_OP_ACK:
+    case UAF_OP_NAK_SEQ: case UAF_OP_NAK_RNR: case UAF_OP_NAK_INVAL:
         return 1;
     case UAF_WR_RECV:
     default:
