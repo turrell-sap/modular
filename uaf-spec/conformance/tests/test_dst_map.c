@@ -80,12 +80,29 @@ int main(void)
     CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_GENERIC, 0x00), UAF_OK);
     CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_GENERIC, 0x02), UAF_ERR_INVAL);
     CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_GENERIC, 0x80),
-               UAF_ERR_MR_FAULT);                       /* LBA out of range */
+               UAF_ERR_MR_FAULT);                    /* LBA Out of Range      */
+    /* The codes themselves, against NVMe Base 2.0d. v2.1.2 put PRP Offset
+     * Invalid at generic 0x0B (which is Invalid Namespace or Format) and a
+     * read-only-range error at generic 0x1E (SGL Data Block Granularity). */
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_GENERIC, 0x13),
+               UAF_ERR_MR_FAULT);                    /* PRP Offset Invalid    */
     CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_GENERIC, 0x0B),
-               UAF_ERR_MR_FAULT);                       /* invalid PRP offset */
+               UAF_ERR_INVAL);                       /* Invalid Ns or Format  */
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_GENERIC, 0x1E),
+               UAF_ERR_MR_FAULT);                    /* SGL Data Blk Granul.  */
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_CMD_SPEC, 0x82),
+               UAF_ERR_PERM);                        /* Write to Read Only    */
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_MEDIA, 0x81),
+               UAF_ERR_REMOTE);                      /* Unrecovered Read Err  */
     CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_MEDIA, 0x82), UAF_ERR_CRC);
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_MEDIA, 0x83), UAF_ERR_CRC);
+    CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_MEDIA, 0x84), UAF_ERR_CRC);
     CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_MEDIA, 0x86), UAF_ERR_PERM);
     CHECK_EQ_I(uaf_dst_status_to_uaf(UAF_NVME_SCT_PATH, 0x01), UAF_ERR_TIMEOUT);
+    /* A protection-information failure must not read as a plain remote error,
+     * and an unrecovered read must not read as a CRC failure. */
+    CHECK(uaf_dst_status_to_uaf(UAF_NVME_SCT_MEDIA, 0x82) !=
+          uaf_dst_status_to_uaf(UAF_NVME_SCT_MEDIA, 0x81));
     /* Every unmapped code must still be a failure, never a silent success. */
     for (unsigned sct = 0; sct < 8u; sct++)
         for (unsigned sc = 1; sc < 256u; sc++)

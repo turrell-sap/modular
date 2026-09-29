@@ -156,29 +156,48 @@ int uaf_dst_status_to_uaf(uint8_t sct, uint8_t sc)
     switch (sct) {
     case UAF_NVME_SCT_GENERIC:
         switch (sc) {
-        case 0x01: return UAF_ERR_INVAL;         /* Invalid Command Opcode   */
-        case 0x02: return UAF_ERR_INVAL;         /* Invalid Field in Command */
-        case 0x03: return UAF_ERR_PROTO;         /* Command ID Conflict      */
-        case 0x04: return UAF_ERR_REMOTE;        /* Data Transfer Error      */
-        case 0x06: return UAF_ERR_REMOTE;        /* Internal Error           */
-        case 0x07: return UAF_ERR_BUSY;          /* Command Abort Requested  */
-        case 0x0B: return UAF_ERR_MR_FAULT;      /* Invalid PRP Offset       */
-        case 0x0D: return UAF_ERR_MR_FAULT;      /* Invalid SGL Descriptor   */
-        case 0x80: return UAF_ERR_MR_FAULT;      /* LBA Out of Range         */
-        case 0x81: return UAF_ERR_NOMEM;         /* Capacity Exceeded        */
-        case 0x82: return UAF_ERR_NODEV;         /* Namespace Not Ready      */
+        /* Generic Command Status, NVM Express Base 2.0d Figure 94. v2.1.2 had
+         * 0x0B as Invalid PRP Offset and mapped a read-only-range error to
+         * generic 0x1E; both are different codes in the spec it cites. */
+        case 0x01: return UAF_ERR_INVAL;      /* Invalid Command Opcode       */
+        case 0x02: return UAF_ERR_INVAL;      /* Invalid Field in Command     */
+        case 0x03: return UAF_ERR_PROTO;      /* Command ID Conflict          */
+        case 0x04: return UAF_ERR_REMOTE;     /* Data Transfer Error          */
+        case 0x06: return UAF_ERR_REMOTE;     /* Internal Error               */
+        case 0x07: return UAF_ERR_BUSY;       /* Command Abort Requested      */
+        case 0x0B: return UAF_ERR_INVAL;      /* Invalid Namespace or Format  */
+        case 0x0D: return UAF_ERR_MR_FAULT;   /* Invalid SGL Segment Descr.   */
+        case 0x0E: return UAF_ERR_MR_FAULT;   /* Invalid Number of SGL Descr. */
+        case 0x0F: return UAF_ERR_MR_FAULT;   /* Data SGL Length Invalid      */
+        case 0x13: return UAF_ERR_MR_FAULT;   /* PRP Offset Invalid           */
+        case 0x15: return UAF_ERR_PERM;       /* Operation Denied             */
+        case 0x16: return UAF_ERR_MR_FAULT;   /* SGL Offset Invalid           */
+        case 0x1E: return UAF_ERR_MR_FAULT;   /* SGL Data Block Granularity   */
+        case 0x20: return UAF_ERR_PERM;       /* Namespace Is Write Protected */
+        /* NVM Command Set specific, same SCT. */
+        case 0x80: return UAF_ERR_MR_FAULT;   /* LBA Out of Range             */
+        case 0x81: return UAF_ERR_NOMEM;      /* Capacity Exceeded            */
+        case 0x82: return UAF_ERR_NODEV;      /* Namespace Not Ready          */
+        case 0x83: return UAF_ERR_BUSY;       /* Reservation Conflict         */
         default:   return UAF_ERR_REMOTE;
         }
     case UAF_NVME_SCT_CMD_SPEC:
-        return (sc == 0x1E) ? UAF_ERR_PERM : UAF_ERR_INVAL;
+        switch (sc) {
+        case 0x81: return UAF_ERR_CRC;        /* Invalid Protection Info      */
+        case 0x82: return UAF_ERR_PERM;       /* Write to Read Only Range     */
+        default:   return UAF_ERR_INVAL;
+        }
     case UAF_NVME_SCT_MEDIA:
         switch (sc) {
-        case 0x81: return UAF_ERR_CRC;           /* Data Transfer Guard Check */
-        case 0x82: return UAF_ERR_CRC;           /* Guard Check Error         */
-        case 0x83: return UAF_ERR_CRC;           /* Application Tag Check     */
-        case 0x84: return UAF_ERR_CRC;           /* Reference Tag Check       */
-        case 0x86: return UAF_ERR_PERM;          /* Access Denied             */
-        default:   return UAF_ERR_REMOTE;        /* unrecovered media error   */
+        case 0x80: return UAF_ERR_REMOTE;     /* Write Fault                  */
+        case 0x81: return UAF_ERR_REMOTE;     /* Unrecovered Read Error       */
+        case 0x82: return UAF_ERR_CRC;        /* End-to-end Guard Check       */
+        case 0x83: return UAF_ERR_CRC;        /* End-to-end App Tag Check     */
+        case 0x84: return UAF_ERR_CRC;        /* End-to-end Ref Tag Check     */
+        case 0x85: return UAF_ERR_REMOTE;     /* Compare Failure              */
+        case 0x86: return UAF_ERR_PERM;       /* Access Denied                */
+        case 0x87: return UAF_ERR_MR_FAULT;   /* Deallocated/Unwritten Block  */
+        default:   return UAF_ERR_REMOTE;
         }
     case UAF_NVME_SCT_PATH:
         return UAF_ERR_TIMEOUT;

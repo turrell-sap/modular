@@ -15,6 +15,14 @@ int main(void)
     CHECK_EQ_I(uaf_rmt_cq_init(&cq, ring, 8u), UAF_OK);
     CHECK_EQ_U(cq.expected_phase, 1u);
 
+    CASE("the initial expected phase is 1, not 0");
+    /* If a consumer started expecting 0 it would accept every zeroed entry as
+     * UAF_OK. v2.1.2's [R-9.5-007] cited the producer release and the consumer
+     * acquire and omitted the initial value and the wrap flip. */
+    CHECK_EQ_U(cq.expected_phase, 1u);
+    CHECK_EQ_U(ring[0].phase & UAF_CQE_PHASE_MASK, 0u);
+    CHECK(cq.expected_phase != (ring[0].phase & UAF_CQE_PHASE_MASK));
+
     CASE("a zeroed ring yields zero completions");
     /* Same reason the DST ring needs a phase tag: status UAF_OK is 0, which is
      * also what an untouched slot holds. */

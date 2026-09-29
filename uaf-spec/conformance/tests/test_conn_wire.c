@@ -40,6 +40,14 @@ int main(void)
     CHECK_EQ_U(out.path, ci.path);
     CHECK_EQ_I(memcmp(out.gid, ci.gid, 16), 0);
 
+    CASE("publish the record bytes for the Section 5.8 vector");
+    printf("  connection record (64 bytes):\n");
+    for (int i = 0; i < UAF_CONN_WIRE_SIZE; i += 16) {
+        printf("    %02d:", i);
+        for (int j = 0; j < 16; j++) printf(" %02X", w[i + j]);
+        printf("\n");
+    }
+
     CASE("the wire form is big-endian with no holes");
     CHECK_EQ_U(w[UAF_CW_QP_NUM + 0], 0x01);
     CHECK_EQ_U(w[UAF_CW_QP_NUM + 3], 0x04);
