@@ -95,6 +95,18 @@ int main(void)
     h = base_hdr(); h.msg_len = 10u; h.seg_off = 8u; h.seg_len = 8u;
     CHECK_EQ_I(uaf_wire_hdr_encode(&h, buf, NULL), UAF_ERR_INVAL);
 
+    CASE("framing bounds cannot be defeated by a 32-bit wrap");
+    /* [R-9.5-010] governs this check too. seg_off + seg_len is a 32-bit sum in
+     * the obvious spelling: 0xFFFFFFF8 + 16 is 8, which would pass against a
+     * msg_len of 8. The codec evaluates it in 64 bits. */
+    h = base_hdr();
+    h.msg_len = 8u; h.seg_off = 0xFFFFFFF8u; h.seg_len = 16u;
+    CHECK_EQ_I(uaf_wire_hdr_encode(&h, buf, NULL), UAF_ERR_INVAL);
+    h.msg_len = 0xFFFFFFFFu; h.seg_off = 0xFFFFFFFFu; h.seg_len = 1u;
+    CHECK_EQ_I(uaf_wire_hdr_encode(&h, buf, NULL), UAF_ERR_INVAL);
+    h.msg_len = 0xFFFFFFFFu; h.seg_off = 0xFFFFFFFEu; h.seg_len = 1u;
+    CHECK_EQ_I(uaf_wire_hdr_encode(&h, buf, NULL), UAF_OK);   /* exactly fits */
+
     CASE("framing: FIRST and LAST are derived");
     uint32_t mtu = 4096u, seg = UAF_WIRE_MAX_SEG(mtu);
     CHECK_EQ_U(uaf_wire_seg_count(0u, mtu), 1u);

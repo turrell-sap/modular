@@ -5,9 +5,11 @@ Fabric (UAF)** engineering specification.
 
 | File | Description |
 |---|---|
-| `build_uaf_v214_pdf.sh` | Builds **v2.1.4** (current). Writes the Markdown, runs two build gates, compiles the PDF |
+| `build_uaf_v215_pdf.sh` | Builds **v2.1.5** (current). Writes the Markdown, runs two build gates, compiles the PDF |
+| `UAF-SPEC-001-v2.1.5.md` / `.pdf` | v2.1.5, 75 pages, 193 numbered requirements |
+| `build_uaf_v214_pdf.sh` | Builds **v2.1.4**, the reviewed baseline for v2.1.5 |
 | `UAF-SPEC-001-v2.1.4.md` / `.pdf` | v2.1.4, 73 pages, 192 numbered requirements |
-| `build_uaf_v213_pdf.sh` | Builds **v2.1.3**, the reviewed baseline for v2.1.4 |
+| `build_uaf_v213_pdf.sh` | Builds **v2.1.3** |
 | `UAF-SPEC-001-v2.1.3.md` / `.pdf` | v2.1.3, 71 pages, 191 numbered requirements |
 | `build_uaf_v212_pdf.sh` | Builds **v2.1.2** |
 | `UAF-SPEC-001-v2.1.2.md` / `.pdf` | v2.1.2, 67 pages, 187 numbered requirements |
@@ -17,11 +19,11 @@ Fabric (UAF)** engineering specification.
 | `UAF-SPEC-001-v2.1.md` / `.pdf` | v2.1, 51 pages, 162 numbered requirements |
 | `build_uaf_v2_pdf.sh` | Builds **v2.0**, the original reviewed baseline |
 | `UAF-SPEC-001-v2.md` / `.pdf` | v2.0, 23 pages |
-| `conformance/` | Executable conformance suite for v2.1.4 |
+| `conformance/` | Executable conformance suite for v2.1.5 |
 
 Each revision is kept so the review trail stays intact: v2.0 was reviewed twice,
-then v2.1, v2.1.1, v2.1.2 and v2.1.3 once each. Every finding's disposition is
-recorded in the current document's Appendices E through I, newest first.
+then every subsequent revision once each. Every finding's disposition is
+recorded in the current document's Appendices E through J, newest first.
 
 The `.md` files are generated: each build script rewrites its Markdown from an
 embedded heredoc on every run, so edits belong in the script.
@@ -29,7 +31,7 @@ embedded heredoc on every run, so edits belong in the script.
 ## Build the specification
 
 ```bash
-./build_uaf_v214_pdf.sh
+./build_uaf_v215_pdf.sh
 ```
 
 ### Build gates
@@ -90,10 +92,11 @@ The values the specification publishes as test vectors are produced by
 
 ## Status
 
-v2.1.4 is **Draft for Approval**. The review of v2.1.3 recommended signing
-Section 1.6; v2.1.4 closes the six items it would still have edited (Appendix E).
-The signature block stays empty because only the eight named reviewers can fill
-it, and the status line changes when they do — not before. Of the eight open issues, four are closed on the substance and
+v2.1.5 is **Draft for Approval**. The reviews of v2.1.3 and v2.1.4 both
+recommended signing Section 1.6; each subsequent revision has closed the items
+that review would still have edited (Appendix E). The signature block stays empty
+because only the eight named reviewers can fill it, and the status line changes
+when they do — not before. Of the eight open issues, four are closed on the substance and
 four are accepted as deliberate limits of the 2.1.x line; only OI-7, validating
 the performance targets, needs hardware. Appendix D records each. Section 1.6 carries the sign-off
 block that must be completed before the status may change.
@@ -113,5 +116,5 @@ The v2.0 Markdown had three layout defects, corrected in both scripts:
 The preamble also keeps the output free of overfull lines: `fvextra` wraps long
 code lines, long `snake_case` identifiers become breakable in both prose and
 tables, and `pdfstringdefDisableCommands` keeps that breaking out of the PDF
-bookmarks. All six documents build with zero overfull boxes, zero missing characters and
+bookmarks. All seven documents build with zero overfull boxes, zero missing characters and
 zero LaTeX errors. No strikethrough is used, so `soul.sty` is not required.

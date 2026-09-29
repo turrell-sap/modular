@@ -421,11 +421,15 @@ _Static_assert(offsetof(struct uaf_storage_cqe, phase) == 15,
  * [R-9.5-002] stated the CXL window check in the wrapping form, and an earlier
  * revision had the same defect in a DST length check.
  *
- * len == 0 is contained in any size, including size == 0. */
+ * There is deliberately no len == 0 shortcut. v2.1.4 had one, which returned
+ * "within" for a zero-length range at an offset past the end, while
+ * [R-9.5-002] rejects that case because the offset alone is out of range. The
+ * two forms below agree with the requirement for every input, so no exception
+ * has to be written anywhere: a zero-length range is within the window exactly
+ * when its offset is, which is also what an offset of size itself gives. */
 static inline int uaf_range_within(uint64_t off, uint64_t len, uint64_t size)
 {
-    if (len == 0u)   return 1;
-    if (off > size)  return 0;
+    if (off > size) return 0;
     return len <= size - off;
 }
 

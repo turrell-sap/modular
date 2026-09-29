@@ -96,9 +96,31 @@ int main(void)
                UAF_ERR_MR_FAULT);
     CHECK_EQ_I(uaf_cxl_window_check(8u, 0xFFFFFFFFFFFFFFFFull, WIN),
                UAF_ERR_MR_FAULT);
-    /* A zero-length request is contained in any window. */
+    /* A zero-length request is within the window exactly when its offset is.
+     * v2.1.4's helper had a len == 0 shortcut that accepted a zero-length
+     * request past the end, disagreeing with [R-9.5-002], which rejects it on
+     * the offset term alone. The helper and the inequality now agree. */
     CHECK_EQ_I(uaf_cxl_window_check(0u, 0u, 0u), UAF_OK);
-    CHECK_EQ_I(uaf_cxl_window_check(WIN, 0u, WIN), UAF_OK);
+    CHECK_EQ_I(uaf_cxl_window_check(WIN, 0u, WIN), UAF_OK);      /* at the end */
+    CHECK_EQ_I(uaf_cxl_window_check(WIN + 1u, 0u, WIN),
+               UAF_ERR_MR_FAULT);                                /* past it    */
+    CHECK_EQ_I(uaf_cxl_window_check(0xFFFFFFFFFFFFFFFFull, 0u, WIN),
+               UAF_ERR_MR_FAULT);
+    /* Cross-check the helper against the inequality of [R-9.5-002] over a
+     * spread of inputs, including the wrapping ones. */
+    {
+        static const uint64_t V[] = {
+            0u, 1u, 8u, WIN - 1u, WIN, WIN + 1u, 0xFFFFFFFFull,
+            0xFFFFFFFFFFFFFFF8ull, 0xFFFFFFFFFFFFFFFFull
+        };
+        for (unsigned a = 0; a < sizeof(V)/sizeof(V[0]); a++)
+            for (unsigned b = 0; b < sizeof(V)/sizeof(V[0]); b++) {
+                int helper = uaf_range_within(V[a], V[b], WIN);
+                int rule   = !(V[a] > WIN || V[b] > WIN - (V[a] > WIN ? 0 : V[a]));
+                if (V[a] > WIN) rule = 0;      /* first term short-circuits */
+                CHECK_EQ_I(helper, rule);
+            }
+    }
 
     CASE("bad arguments are rejected");
     CHECK_EQ_I(uaf_rmt_cq_poll(&cq, -1, wc, QPN), UAF_ERR_INVAL);

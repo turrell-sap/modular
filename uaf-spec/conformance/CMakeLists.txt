@@ -5,7 +5,7 @@
 # ring discipline, key model, QP state machine, DST mapping, CM tie-break --
 # and runs the eleven conformance cases of Section 12.3 against them.
 cmake_minimum_required(VERSION 3.20)
-project(uaf_conformance VERSION 2.1.4 LANGUAGES C)
+project(uaf_conformance VERSION 2.1.5 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
