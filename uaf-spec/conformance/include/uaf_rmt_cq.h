@@ -51,3 +51,12 @@ static inline uint8_t uaf_rmt_cqe_load_phase(const struct uaf_rmt_cqe *e)
 }
 
 #endif /* UAF_RMT_CQ_H */
+
+/* [R-9.5-002] The agent's window bounds check, in the overflow-safe form.
+ * Returns UAF_OK, or UAF_ERR_MR_FAULT when the request leaves the window. */
+static inline int uaf_cxl_window_check(uint64_t remote_addr, uint64_t sge_total,
+                                       uint64_t cxl_size)
+{
+    return uaf_range_within(remote_addr, sge_total, cxl_size)
+           ? UAF_OK : UAF_ERR_MR_FAULT;
+}

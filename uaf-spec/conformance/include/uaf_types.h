@@ -413,6 +413,22 @@ _Static_assert(offsetof(struct uaf_storage_cqe, phase) == 15,
 
 #define UAF_CQE_PHASE_MASK  0x01U
 
+/* Overflow-safe containment test: is [off, off+len) inside [0, size)?
+ *
+ * Every bounds check in this specification is written this way. The natural
+ * spelling `off + len > size` wraps for uint64_t and admits a request it should
+ * refuse: with off = 2^64 - 8 and len = 16 the sum is 8, which passes. v2.1.3's
+ * [R-9.5-002] stated the CXL window check in the wrapping form, and an earlier
+ * revision had the same defect in a DST length check.
+ *
+ * len == 0 is contained in any size, including size == 0. */
+static inline int uaf_range_within(uint64_t off, uint64_t len, uint64_t size)
+{
+    if (len == 0u)   return 1;
+    if (off > size)  return 0;
+    return len <= size - off;
+}
+
 /* The RMT completion the UAF-D agent writes into the CXL window, and the only
  * device-visible RMT completion this specification defines. v2.1.1 told the
  * agent to release-store "the completion" and the host to acquire-load it,

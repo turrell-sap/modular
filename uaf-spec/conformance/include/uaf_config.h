@@ -12,7 +12,7 @@
 
 #define UAF_VERSION_MAJOR       2
 #define UAF_VERSION_MINOR       1
-#define UAF_VERSION_PATCH       3
+#define UAF_VERSION_PATCH       4
 
 /* Feature flags. These select OPTIONAL code paths inside one build of the
  * library. They MUST NOT change the layout or size of any ABI struct; every

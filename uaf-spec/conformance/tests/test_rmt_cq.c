@@ -81,6 +81,25 @@ int main(void)
     CHECK(wc[0].wc_flags & UAF_WC_ATOMIC_ORIG);
     CHECK_EQ_U(wc[0].byte_len, 8u);
 
+    CASE("the window bounds check cannot be defeated by overflow");
+    /* v2.1.3 stated this as remote_addr + L > cxl_size. For uint64_t that wraps:
+     * 2^64 - 8 plus 16 is 8, which passes a naive test and reads 16 bytes from
+     * an address 8 below the end of the address space. */
+    const uint64_t WIN = 0x40000000ull;                      /* 1 GiB window */
+    CHECK_EQ_I(uaf_cxl_window_check(0u, WIN, WIN), UAF_OK);
+    CHECK_EQ_I(uaf_cxl_window_check(WIN - 8u, 8u, WIN), UAF_OK);
+    CHECK_EQ_I(uaf_cxl_window_check(WIN - 8u, 9u, WIN), UAF_ERR_MR_FAULT);
+    CHECK_EQ_I(uaf_cxl_window_check(WIN, 1u, WIN), UAF_ERR_MR_FAULT);
+    CHECK_EQ_I(uaf_cxl_window_check(0xFFFFFFFFFFFFFFF8ull, 16u, WIN),
+               UAF_ERR_MR_FAULT);                 /* the wrapping case */
+    CHECK_EQ_I(uaf_cxl_window_check(0xFFFFFFFFFFFFFFFFull, 1u, WIN),
+               UAF_ERR_MR_FAULT);
+    CHECK_EQ_I(uaf_cxl_window_check(8u, 0xFFFFFFFFFFFFFFFFull, WIN),
+               UAF_ERR_MR_FAULT);
+    /* A zero-length request is contained in any window. */
+    CHECK_EQ_I(uaf_cxl_window_check(0u, 0u, 0u), UAF_OK);
+    CHECK_EQ_I(uaf_cxl_window_check(WIN, 0u, WIN), UAF_OK);
+
     CASE("bad arguments are rejected");
     CHECK_EQ_I(uaf_rmt_cq_poll(&cq, -1, wc, QPN), UAF_ERR_INVAL);
     CHECK_EQ_I(uaf_rmt_cq_poll(&cq, 1, NULL, QPN), UAF_ERR_INVAL);

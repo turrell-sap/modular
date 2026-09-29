@@ -59,6 +59,14 @@ int main(void)
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100FFCu, 8u,
                                 UAF_MR_REMOTE_WRITE, 1), UAF_ERR_MR_FAULT);
 
+    CASE("the bounds check cannot be defeated by overflow");
+    CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100000u, 0xFFFFFFFFFFFFFFFFull,
+                                UAF_MR_REMOTE_WRITE, 1), UAF_ERR_MR_FAULT);
+    CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0xFFFFFFFFFFFFFFF8ull, 16u,
+                                UAF_MR_REMOTE_WRITE, 1), UAF_ERR_MR_FAULT);
+    CHECK(uaf_range_within(0u, 0u, 0u));
+    CHECK(!uaf_range_within(0xFFFFFFFFFFFFFFF8ull, 16u, 4096u));
+
     CASE("access flags are enforced");
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100000u, 8u,
                                 UAF_MR_ATOMIC, 1), UAF_ERR_PERM);

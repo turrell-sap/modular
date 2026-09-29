@@ -98,8 +98,9 @@ int uaf_key_validate(struct uaf_key_table *t, uint32_t rkey, uint32_t qp_num,
             return UAF_ERR_RKEY;
         }
         if ((e->access & want) != want) return UAF_ERR_PERM;
-        if (va < e->base || len > e->length ||
-            va - e->base > e->length - len) return UAF_ERR_MR_FAULT;
+        if (va < e->base ||
+            !uaf_range_within(va - e->base, len, e->length))
+            return UAF_ERR_MR_FAULT;          /* one overflow-safe spelling */
         t->fail_count = 0u;
         return UAF_OK;
     }
