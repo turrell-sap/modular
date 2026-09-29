@@ -5,7 +5,7 @@
 # ring discipline, key model, QP state machine, DST mapping, CM tie-break --
 # and runs the eleven conformance cases of Section 12.3 against them.
 cmake_minimum_required(VERSION 3.20)
-project(uaf_conformance VERSION 2.1.0 LANGUAGES C)
+project(uaf_conformance VERSION 2.1.2 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -22,6 +22,7 @@ add_library(uaf_ref STATIC
     src/uaf_rkey.c
     src/uaf_qp_state.c
     src/uaf_cm.c
+    src/uaf_rmt_cq.c
 )
 target_include_directories(uaf_ref PUBLIC include)
 target_compile_options(uaf_ref PRIVATE
@@ -41,7 +42,8 @@ if(UAF_BUILD_TESTS)
         dst_map       # C-8  NVMe opcode map, NLB, PRP/SGL, cmd_id, status map
         conn_wire     # C-9  connection exchange serialisation
         udp_loopback  # C-10 end-to-end RDMA WRITE over UDP
-        cm            # C-11 CM packet sizing and simultaneous open
+        cm            # C-11 CM sizing, MAC input, simultaneous open
+        rmt_cq        # C-12 intra-host RMT completion ring (UAF-D)
     )
     foreach(case IN LISTS UAF_CONFORMANCE_CASES)
         add_executable(test_${case} tests/test_${case}.c)

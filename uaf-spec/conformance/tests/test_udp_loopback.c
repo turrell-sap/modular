@@ -106,8 +106,11 @@ int main(void)
 
     uint32_t lkey = 0, rkey = 0;
     CHECK_EQ_I(uaf_key_register(&R.keys, R.base, R.len, UAF_MR_REMOTE_WRITE,
-                               R.qp_num, &lkey, &rkey), UAF_OK);
+                               0u /* unbound at registration */, &lkey, &rkey),
+               UAF_OK);
     (void)lkey;
+    /* [R-11.2-003] the queue-pair binding is installed at connect time. */
+    CHECK_EQ_I(uaf_key_bind_qp(&R.keys, rkey, R.qp_num), UAF_OK);
 
     CASE("segment, send, receive, reassemble");
     uint32_t nseg = uaf_wire_seg_count(MSG_BYTES, TEST_MTU);

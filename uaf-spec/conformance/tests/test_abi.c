@@ -4,6 +4,7 @@
 #include "uaf_core.h"   /* the public header must compile under -Werror */
 #include "uaf_wire.h"
 #include "uaf_dst.h"
+#include "uaf_rmt_cq.h"
 #include <stddef.h>
 
 int main(void)
@@ -13,7 +14,7 @@ int main(void)
     CHECK_EQ_U(sizeof(struct uaf_sge), 16);
     CHECK_EQ_U(sizeof(struct uaf_wr), 64);
     CHECK_EQ_U(sizeof(struct uaf_wc), 40);
-    CHECK_EQ_U(sizeof(struct uaf_qp_init_attr), 32);
+    CHECK_EQ_U(sizeof(struct uaf_qp_init_attr), 40);
     CHECK_EQ_U(sizeof(struct uaf_qp_attr), 80);
     CHECK_EQ_U(sizeof(struct uaf_device_attr), 64);
     CHECK_EQ_U(sizeof(struct uaf_conn_info), 64);
@@ -21,6 +22,7 @@ int main(void)
     CHECK_EQ_U(sizeof(struct uaf_storage_cmd), 56);
     CHECK_EQ_U(sizeof(struct uaf_storage_cqe), 16);
     CHECK_EQ_U(sizeof(struct uaf_storage_wc), 24);
+    CHECK_EQ_U(sizeof(struct uaf_rmt_cqe), 32);
 
     CASE("CQE is not packed and phase is the last byte");
     CHECK_EQ_U(_Alignof(struct uaf_storage_cqe), 4);
@@ -29,6 +31,20 @@ int main(void)
     CHECK_EQ_U(offsetof(struct uaf_storage_cqe, status), 2);
     CHECK_EQ_U(offsetof(struct uaf_storage_cqe, bytes_transferred), 4);
     CHECK_EQ_U(offsetof(struct uaf_storage_cqe, latency_ns), 8);
+
+    CASE("the intra-host RMT completion has a layout, with phase last");
+    /* v2.1.1 told the agent to release-store "the completion" and named no
+     * object: uaf_wc is 40 bytes, host-side, and has no phase byte. */
+    CHECK_EQ_U(offsetof(struct uaf_rmt_cqe, wr_id), 0);
+    CHECK_EQ_U(offsetof(struct uaf_rmt_cqe, phase), 31);
+    CHECK_EQ_U(_Alignof(struct uaf_rmt_cqe), 8);
+    CHECK_EQ_U(UAF_RMT_CQE_ALIGN, 32);
+
+    CASE("a path discriminant exists in both the init attr and the record");
+    CHECK_EQ_U(sizeof(((struct uaf_qp_init_attr *)0)->path), 4);
+    CHECK_EQ_U(sizeof(((struct uaf_conn_info *)0)->path), 1);
+    CHECK(UAF_PATH_IBV != UAF_PATH_UDP);
+    CHECK(UAF_PATH_UDP != UAF_PATH_CXL);
 
     CASE("the public storage completion carries a full 64-bit wr_id");
     /* v2.1 required the library to restore the caller's wr_id while giving
@@ -81,7 +97,8 @@ int main(void)
 
     CASE("connection wire form is 64 bytes with no holes");
     CHECK_EQ_U(UAF_CONN_WIRE_SIZE, 64);
-    CHECK_EQ_U(UAF_CW_RESERVED + 5, UAF_CONN_WIRE_SIZE);
+    CHECK_EQ_U(UAF_CW_PATH, 59);
+    CHECK_EQ_U(UAF_CW_RESERVED + 4, UAF_CONN_WIRE_SIZE);
 
     TEST_MAIN_END("test_abi");
 }

@@ -83,5 +83,66 @@ int main(void)
     struct uaf_endpoint_id hi_addr_lo_qpn = eid("10.0.0.2", 0u, 0u);
     CHECK(uaf_eid_compare(&lo_addr_hi_qpn, &hi_addr_lo_qpn) < 0);
 
+    CASE("the MAC input is defined for a 32-byte body, not only for 96");
+    /* v2.1.1 always hashed header[0..47] || record(64) || nonce || timestamp,
+     * and CM_RTU and CM_REJ carry no record. */
+    uint8_t hdr[64], rec[UAF_CM_RECORD_SIZE], nonce[8], ts[8];
+    uint8_t mac_in[UAF_CM_MAC_INPUT_MAX];
+    memset(hdr, 0, sizeof(hdr));
+    for (unsigned i = 0; i < sizeof(rec); i++)   rec[i]   = (uint8_t)(i + 1u);
+    for (unsigned i = 0; i < sizeof(nonce); i++) nonce[i] = (uint8_t)(0xA0 + i);
+    for (unsigned i = 0; i < sizeof(ts); i++)    ts[i]    = (uint8_t)(0xB0 + i);
+    uaf_put_be32(hdr + UAF_H_QP_ID, 0x0DEFACEDu);
+
+    size_t n_req = uaf_cm_mac_input(UAF_OP_CM_REQ, hdr, rec, nonce, ts, mac_in);
+    CHECK_EQ_U(n_req, 48u + 64u + 16u);          /* 128 */
+    CHECK_EQ_U(mac_in[48], 1u);                  /* record starts at 48 */
+    CHECK_EQ_U(mac_in[48 + 64], 0xA0u);          /* then the nonce */
+    CHECK_EQ_U(mac_in[48 + 64 + 8], 0xB0u);      /* then the timestamp */
+
+    size_t n_rtu = uaf_cm_mac_input(UAF_OP_CM_RTU, hdr, NULL, nonce, ts, mac_in);
+    CHECK_EQ_U(n_rtu, 48u + 16u);                /* 64: no record */
+    CHECK_EQ_U(mac_in[48], 0xA0u);               /* the nonce follows the header */
+    CHECK_EQ_U(mac_in[56], 0xB0u);
+
+    size_t n_rej = uaf_cm_mac_input(UAF_OP_CM_REJ, hdr, NULL, nonce, ts, mac_in);
+    CHECK_EQ_U(n_rej, 48u + 16u);
+    CHECK_EQ_U(uaf_cm_mac_input(UAF_WR_RDMA_WRITE, hdr, rec, nonce, ts, mac_in),
+               0u);                              /* not a CM opcode */
+    /* A REQ without its record cannot be hashed, and must not silently become
+     * a short input that a REJ could also produce. */
+    CHECK_EQ_U(uaf_cm_mac_input(UAF_OP_CM_REQ, hdr, NULL, nonce, ts, mac_in), 0u);
+    CHECK(n_req != n_rtu);
+
+    CASE("replay is keyed on the header qp_id, which every CM packet has");
+    /* v2.1.1 keyed replay on (nonce, qp_num) where qp_num lived in the record
+     * that RTU and REJ do not carry. */
+    CHECK_EQ_U(uaf_cm_replay_qp(hdr), 0x0DEFACEDu);
+
+    CASE("identities built from SOURCE fields stay complementary");
+    /* Each side uses its OWN source address and port. Simulating both peers:
+     * A sends from 10.0.0.1:40000, B from 10.0.0.2:4791. */
+    struct uaf_endpoint_id a_self = eid("10.0.0.1", 40000u, 0x101u);
+    struct uaf_endpoint_id b_self = eid("10.0.0.2", 4791u,  0x202u);
+    /* A derives B's identity from the source fields of the CM_REQ it received,
+     * and B derives A's the same way, so both hold the same pair. */
+    int a_view = uaf_cm_is_active(&a_self, &b_self);
+    int b_view = uaf_cm_is_active(&b_self, &a_self);
+    CHECK_EQ_I(a_view + b_view, 1);
+    /* Had each side used its DESTINATION port instead, both would have compared
+     * (own addr, PEER port, own qpn) and could agree. Show the tuples differ. */
+    struct uaf_endpoint_id a_wrong = eid("10.0.0.1", 4791u,  0x101u);
+    struct uaf_endpoint_id b_wrong = eid("10.0.0.2", 40000u, 0x202u);
+    CHECK(uaf_eid_compare(&a_self, &a_wrong) != 0);
+    CHECK(uaf_eid_compare(&b_self, &b_wrong) != 0);
+
+    CASE("Profile A uses the GID with a zero port");
+    struct uaf_endpoint_id g1, g2;
+    memset(&g1, 0, sizeof(g1)); memset(&g2, 0, sizeof(g2));
+    g1.addr[0] = 0xFE; g1.addr[15] = 0x01; g1.qp_num = 5u;
+    g2.addr[0] = 0xFE; g2.addr[15] = 0x02; g2.qp_num = 5u;
+    CHECK_EQ_U(g1.udp_port, 0u);
+    CHECK_EQ_I(uaf_cm_is_active(&g1, &g2) + uaf_cm_is_active(&g2, &g1), 1);
+
     TEST_MAIN_END("test_cm");
 }

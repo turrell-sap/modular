@@ -127,6 +127,17 @@ enum uaf_wire_profile {
     UAF_PROFILE_UAFR = (1U << 1), /* 64-byte UAF-RMT header over UDP       */
 };
 
+/* The data plane a queue pair uses. A profile is not enough to say: UAF-D
+ * declares UAF_PROFILE_UAFR for node-to-node traffic and also carries an
+ * intra-host CXL.mem path with no packet header and no MTU, and v2.1.1 gave
+ * nothing in uaf_create_qp or uaf_conn_info able to select between them. The
+ * required RTR attribute mask differs per path (Section 10.1). */
+enum uaf_path {
+    UAF_PATH_IBV = 1,  /* Profile A: IB or RoCEv2 transport   */
+    UAF_PATH_UDP = 2,  /* Profile B: UAF-RMT header over UDP  */
+    UAF_PATH_CXL = 3,  /* CXL.mem ring, intra-host (Section 9.5) */
+};
+
 /* ---- Device capabilities (Section 4.8) -------------------------------- */
 enum uaf_device_cap {
     UAF_CAP_ATOMICS        = (1ULL << 0),
@@ -243,8 +254,10 @@ struct uaf_qp_init_attr {
     uint32_t max_recv_sge;
     uint32_t max_inline_data;
     uint32_t sq_sig_all;       /* 0: only UAF_SEND_SIGNALED WRs complete */
+    uint32_t path;             /* enum uaf_path */
+    uint32_t reserved0;
 };
-_Static_assert(sizeof(struct uaf_qp_init_attr) == 32,
+_Static_assert(sizeof(struct uaf_qp_init_attr) == 40,
                "uaf_qp_init_attr layout is ABI");
 
 /* Attribute mask for uaf_modify_qp(). v2.0 had no mask, so which fields a
@@ -338,7 +351,7 @@ struct uaf_conn_info {
     uint8_t  sl;
     uint8_t  traffic_class;
     uint8_t  wire_profile;     /* a single enum uaf_wire_profile bit */
-    uint8_t  reserved0;
+    uint8_t  path;             /* enum uaf_path; MUST agree with the peer */
 };
 _Static_assert(sizeof(struct uaf_conn_info) == 64,
                "uaf_conn_info layout is ABI");
@@ -399,6 +412,29 @@ _Static_assert(offsetof(struct uaf_storage_cqe, phase) == 15,
                "phase MUST be the last byte written");
 
 #define UAF_CQE_PHASE_MASK  0x01U
+
+/* The RMT completion the UAF-D agent writes into the CXL window, and the only
+ * device-visible RMT completion this specification defines. v2.1.1 told the
+ * agent to release-store "the completion" and the host to acquire-load it,
+ * naming no object: uaf_wc is 40 bytes, host-side, and has no phase byte.
+ *
+ * Same discipline as the DST ring: the producer writes bytes 0..30, releases,
+ * then stores `phase`; the consumer acquire-loads `phase` first. The host
+ * converts an accepted entry into a uaf_wc before handing it to the caller. */
+struct uaf_rmt_cqe {
+    uint64_t wr_id;
+    int32_t  status;            /* enum uaf_error */
+    uint32_t byte_len;
+    uint32_t imm_data;
+    uint32_t wc_flags;          /* UAF_WC_* */
+    uint8_t  reserved0[7];      /* MUST be zero */
+    uint8_t  phase;             /* bit 0 is the phase tag */
+};
+_Static_assert(sizeof(struct uaf_rmt_cqe) == 32,
+               "uaf_rmt_cqe is a 32-byte ring entry");
+_Static_assert(offsetof(struct uaf_rmt_cqe, phase) == 31,
+               "phase MUST be the last byte written");
+#define UAF_RMT_CQE_ALIGN  32
 
 /* The 16-byte entry above is the DEVICE RING IMAGE. What an application
  * receives from uaf_storage_poll() is this host completion, which carries the

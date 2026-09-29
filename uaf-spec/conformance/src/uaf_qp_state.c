@@ -24,18 +24,31 @@ int uaf_qp_transition_legal(enum uaf_qp_state from, enum uaf_qp_state to)
     }
 }
 
-uint32_t uaf_qp_required_mask(enum uaf_qp_state to, uint32_t profile)
+uint32_t uaf_qp_required_mask(enum uaf_qp_state to, uint32_t path)
 {
     switch (to) {
     case UAF_QPS_INIT:
         return UAF_QP_STATE | UAF_QP_PORT;
     case UAF_QPS_RTR: {
         /* [R-10.1-006] rq_psn is required at RTR; v2.0's table never asked
-         * for it. The address vector required depends on the wire profile. */
+         * for it. [R-10.1-008] the address vector and the MTU requirement
+         * depend on the path. */
         uint32_t m = UAF_QP_STATE | UAF_QP_RQ_PSN | UAF_QP_DEST_QPN |
-                     UAF_QP_PATH_MTU | UAF_QP_MAX_DEST_RD_AT;
-        if (profile == UAF_PROFILE_IBV)  m |= UAF_QP_AV_GID | UAF_QP_AV_LID;
-        if (profile == UAF_PROFILE_UAFR) m |= UAF_QP_AV_UDP;
+                     UAF_QP_MAX_DEST_RD_AT;
+        switch (path) {
+        case UAF_PATH_IBV:
+            m |= UAF_QP_PATH_MTU | UAF_QP_AV_GID | UAF_QP_AV_LID;
+            break;
+        case UAF_PATH_UDP:
+            m |= UAF_QP_PATH_MTU | UAF_QP_AV_UDP;
+            break;
+        case UAF_PATH_CXL:
+            /* No MTU: the CXL.mem path carries no packet. */
+            m |= UAF_QP_AV_CXL;
+            break;
+        default:
+            break;
+        }
         return m;
     }
     case UAF_QPS_RTS:
@@ -52,12 +65,12 @@ uint32_t uaf_qp_required_mask(enum uaf_qp_state to, uint32_t profile)
 
 int uaf_qp_modify_check(enum uaf_qp_state from, enum uaf_qp_state to,
                         uint32_t attr_mask, uint32_t attr_state,
-                        uint32_t profile)
+                        uint32_t path)
 {
     if (!uaf_qp_transition_legal(from, to)) return UAF_ERR_QP_STATE;
     /* [R-4.9-003] attr->qp_state MUST agree with the state argument. */
     if (attr_state != (uint32_t)to) return UAF_ERR_INVAL;
-    uint32_t need = uaf_qp_required_mask(to, profile);
+    uint32_t need = uaf_qp_required_mask(to, path);
     if ((attr_mask & need) != need) return UAF_ERR_INVAL;
     return UAF_OK;
 }

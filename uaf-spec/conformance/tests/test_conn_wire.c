@@ -21,6 +21,7 @@ int main(void)
     ci.sl           = 3u;
     ci.traffic_class = 7u;
     ci.wire_profile = UAF_PROFILE_UAFR;
+    ci.path         = UAF_PATH_UDP;
 
     CASE("round trip");
     CHECK_EQ_I(uaf_conn_info_serialize(&ci, w), UAF_OK);
@@ -36,6 +37,7 @@ int main(void)
     CHECK_EQ_U(out.sl, ci.sl);
     CHECK_EQ_U(out.traffic_class, ci.traffic_class);
     CHECK_EQ_U(out.wire_profile, ci.wire_profile);
+    CHECK_EQ_U(out.path, ci.path);
     CHECK_EQ_I(memcmp(out.gid, ci.gid, 16), 0);
 
     CASE("the wire form is big-endian with no holes");
@@ -45,7 +47,8 @@ int main(void)
     CHECK_EQ_U(w[UAF_CW_RKEY + 3], 0xBE);
     CHECK_EQ_U(w[UAF_CW_MTU + 0], 0x10);      /* 4096 = 0x1000 */
     CHECK_EQ_U(w[UAF_CW_MTU + 1], 0x00);
-    for (int i = 0; i < 5; i++) CHECK_EQ_U(w[UAF_CW_RESERVED + i], 0u);
+    CHECK_EQ_U(w[UAF_CW_PATH], UAF_PATH_UDP);
+    for (int i = 0; i < 4; i++) CHECK_EQ_U(w[UAF_CW_RESERVED + i], 0u);
 
     CASE("a host struct memcpy would NOT have been portable");
     /* uaf_conn_info is 64 bytes of host-order fields with interior padding;
@@ -76,10 +79,25 @@ int main(void)
     w[UAF_CW_PROFILE] = 0u;
     CHECK_EQ_I(uaf_conn_info_deserialize(w, &out), UAF_ERR_PROTO);
 
-    CASE("an MTU with no room for the header is rejected");
+    CASE("an MTU with no room for the header is rejected on a packet path");
     ci.mtu = 64u;
     CHECK_EQ_I(uaf_conn_info_serialize(&ci, w), UAF_OK);
     CHECK_EQ_I(uaf_conn_info_deserialize(w, &out), UAF_ERR_PROTO);
+
+    CASE("the CXL path has no MTU, so the floor does not apply to it");
+    ci.path = UAF_PATH_CXL; ci.mtu = 0u;
+    CHECK_EQ_I(uaf_conn_info_serialize(&ci, w), UAF_OK);
+    CHECK_EQ_I(uaf_conn_info_deserialize(w, &out), UAF_OK);
+    CHECK_EQ_U(out.path, UAF_PATH_CXL);
+
+    CASE("a path inconsistent with the profile is rejected");
+    ci.path = UAF_PATH_IBV;                 /* IBV path, UAFR profile */
+    CHECK_EQ_I(uaf_conn_info_serialize(&ci, w), UAF_OK);
+    CHECK_EQ_I(uaf_conn_info_deserialize(w, &out), UAF_ERR_PROTO);
+    ci.path = 0u;                            /* undefined */
+    CHECK_EQ_I(uaf_conn_info_serialize(&ci, w), UAF_OK);
+    CHECK_EQ_I(uaf_conn_info_deserialize(w, &out), UAF_ERR_PROTO);
+    ci.path = UAF_PATH_UDP; ci.mtu = 4096u;
 
     CASE("struct_size must be set by the caller");
     ci.mtu = 4096u; ci.struct_size = 0u;

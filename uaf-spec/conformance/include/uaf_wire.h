@@ -66,9 +66,6 @@
  * every message and at least once every UAF_ACK_REQ_INTERVAL segments.
  * [R-5.6-009] A receiver SHALL emit an ACK on any segment carrying ACK_REQ,
  * and otherwise within UAF_ACK_COALESCE_NS of receiving in-order data. */
-#define UAF_ACK_REQ_INTERVAL   (UAF_WINDOW_DEFAULT / 2)   /* 128 segments */
-#define UAF_ACK_COALESCE_NS    25000ULL                   /* 25 us        */
-
 /* ---- CM packet sizes (Section 5.5) -----------------------------------
  * v2.1 required seg_len == 96 for every CM packet while its own diagram showed
  * CM_RTU carrying an authenticator only. */
@@ -81,12 +78,38 @@
 /* Returns the required seg_len for a CM opcode, or 0 if not a CM opcode. */
 uint32_t uaf_cm_expected_len(uint8_t opcode);
 
+/* [R-5.5-006] The MAC covers header bytes 0..47, the connection record when
+ * the body carries one, then the nonce and the timestamp. v2.1.1 defined the
+ * input only for the 96-byte bodies, so CM_RTU and CM_REJ -- which carry no
+ * record -- had no defined MAC input at all.
+ *
+ * Builds the byte string to be HMAC'd into `out`, returning its length, or 0
+ * if `opcode` is not a CM opcode. `record` may be NULL for a 32-byte body. */
+#define UAF_CM_MAC_INPUT_MAX (UAF_HDR_CRC_COVER + UAF_CM_RECORD_SIZE + 16)
+size_t uaf_cm_mac_input(uint8_t opcode, const uint8_t hdr[64],
+                        const uint8_t *record, const uint8_t nonce[8],
+                        const uint8_t timestamp[8],
+                        uint8_t out[UAF_CM_MAC_INPUT_MAX]);
+
+
 /* ---- Endpoint identity and simultaneous open (Section 5.5) -----------
- * [R-5.5-009] v2.1 broke the tie by comparing (dest_ip, dest_udp_port,
- * qp_num). Each side's destination is the other side, so the two peers
- * compared different tuples and could both remain active or both go passive.
- * The tie-break is now a total order over a canonical 22-byte identity, and
- * both peers evaluate the same two identities in the same order. */
+ * [R-5.5-009] The tie-break is a total order over a canonical 22-byte
+ * identity, and both peers evaluate the same two identities in the same order.
+ *
+ * WHICH address and WHICH port. An endpoint's identity is its own SOURCE
+ * address, its own SOURCE UDP port and its qp_num:
+ *
+ *   local  identity <- the source address and port this endpoint sends from,
+ *                      plus its own qp_num
+ *   remote identity <- the source address and port of the IP/UDP header of the
+ *                      CM_REQ just received, plus the qp_num in that packet
+ *
+ * Under Profile A the address is the GID from the connection record and the
+ * port field is zero. v2.1 compared destination fields, which rebuilds the very
+ * asymmetry the rule exists to remove: A's destination port is B's source port.
+ * v2.1.1 fixed the comparison and still did not say which fields fill the
+ * image -- and the connection record zeroes the GID under Profile B and carries
+ * no IP address, so there was no answer to be had inside it. */
 #define UAF_EID_SIZE  22   /* addr[16] || udp_port(2) || qp_num(4), all BE */
 
 struct uaf_endpoint_id {
@@ -207,7 +230,8 @@ int uaf_wire_segment(struct uaf_wire_hdr *h, uint32_t msg_len, uint32_t mtu,
 #define UAF_CW_SL           56
 #define UAF_CW_TCLASS       57
 #define UAF_CW_PROFILE      58
-#define UAF_CW_RESERVED     59  /* 5 bytes, MUST be zero */
+#define UAF_CW_PATH         59  /* enum uaf_path */
+#define UAF_CW_RESERVED     60  /* 4 bytes, MUST be zero */
 
 int uaf_conn_info_serialize(const struct uaf_conn_info *ci,
                             uint8_t out[UAF_CONN_WIRE_SIZE]);
@@ -231,5 +255,11 @@ static inline uint32_t uaf_get_be32(const uint8_t *p)
          ((uint32_t)p[2] << 8)  | (uint32_t)p[3]; }
 static inline uint64_t uaf_get_be64(const uint8_t *p)
 { return ((uint64_t)uaf_get_be32(p) << 32) | (uint64_t)uaf_get_be32(p + 4); }
+/* [R-5.5-007] Replay is keyed on (nonce, qp_id) where qp_id is taken from the
+ * HEADER, not from the connection record: a 32-byte CM body has no record, and
+ * v2.1.1 keyed replay on a field that was not present in half of the CM
+ * packets it applied to. */
+static inline uint32_t uaf_cm_replay_qp(const uint8_t hdr[64])
+{ return uaf_get_be32(hdr + UAF_H_QP_ID); }
 
 #endif /* UAF_WIRE_H */

@@ -41,3 +41,26 @@ int uaf_cm_is_active(const struct uaf_endpoint_id *local,
 {
     return uaf_eid_compare(local, remote) < 0 ? 1 : 0;
 }
+
+size_t uaf_cm_mac_input(uint8_t opcode, const uint8_t hdr[64],
+                        const uint8_t *record, const uint8_t nonce[8],
+                        const uint8_t timestamp[8],
+                        uint8_t out[UAF_CM_MAC_INPUT_MAX])
+{
+    uint32_t body = uaf_cm_expected_len(opcode);
+    if (body == 0u || !hdr || !nonce || !timestamp || !out) return 0u;
+
+    size_t n = 0;
+    memcpy(out, hdr, UAF_HDR_CRC_COVER);          /* header bytes 0..47 */
+    n += UAF_HDR_CRC_COVER;
+
+    if (body == UAF_CM_REQ_LEN) {                 /* REQ and REP carry a record */
+        if (!record) return 0u;
+        memcpy(out + n, record, UAF_CM_RECORD_SIZE);
+        n += UAF_CM_RECORD_SIZE;
+    }
+    /* RTU and REJ carry no record: header || nonce || timestamp. */
+    memcpy(out + n, nonce, 8);     n += 8;
+    memcpy(out + n, timestamp, 8); n += 8;
+    return n;
+}

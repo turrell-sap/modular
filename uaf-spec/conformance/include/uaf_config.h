@@ -12,7 +12,7 @@
 
 #define UAF_VERSION_MAJOR       2
 #define UAF_VERSION_MINOR       1
-#define UAF_VERSION_PATCH       0
+#define UAF_VERSION_PATCH       2
 
 /* Feature flags. These select OPTIONAL code paths inside one build of the
  * library. They MUST NOT change the layout or size of any ABI struct; every
@@ -72,6 +72,12 @@
 #define UAF_RTO_MAX_NS          2000000ULL /* 2 ms ceiling after backoff    */
 #define UAF_RETRY_MAX           8
 #define UAF_WINDOW_DEFAULT      256        /* segments; see UAF_WINDOW_MIN  */
+
+/* ACK scheduling. Named by [R-5.6-008] and [R-5.6-009]; v2.1.1 left both out
+ * of this header, so a requirement referred to a constant an implementer could
+ * not find. */
+#define UAF_ACK_REQ_INTERVAL    (UAF_WINDOW_DEFAULT / 2)  /* 128 segments */
+#define UAF_ACK_COALESCE_NS     25000ULL                  /* 25 us        */
 
 /* A conformant implementation MUST size the send window to at least the
  * bandwidth-delay product of the path, in segments. */

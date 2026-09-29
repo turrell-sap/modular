@@ -29,6 +29,22 @@ int main(void)
         seen[nseen++] = r2;
     }
 
+    CASE("an unbound rkey does not validate until connect binds it");
+    /* v2.1.1's samples registered with qp_num 0 and never bound, so
+     * [R-11.2-003] described a state nothing ever reached. */
+    {
+        uint32_t l0 = 0, r0 = 0;
+        CHECK_EQ_I(uaf_key_register(&t, 0x900000u, 4096u,
+                                    UAF_MR_REMOTE_WRITE, 0u, &l0, &r0), UAF_OK);
+        CHECK_EQ_I(uaf_key_validate(&t, r0, 11u, 0x900000u, 8u,
+                                    UAF_MR_REMOTE_WRITE, 1), UAF_ERR_RKEY);
+        CHECK_EQ_I(uaf_key_bind_qp(&t, r0, 11u), UAF_OK);
+        CHECK_EQ_I(uaf_key_validate(&t, r0, 11u, 0x900000u, 8u,
+                                    UAF_MR_REMOTE_WRITE, 1), UAF_OK);
+        CHECK_EQ_I(uaf_key_bind_qp(&t, r0, 0u), UAF_ERR_INVAL);
+        CHECK_EQ_I(uaf_key_bind_qp(&t, 0x1234u, 5u), UAF_ERR_RKEY);
+    }
+
     CASE("valid access inside bounds");
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100000u, 4096u,
                                 UAF_MR_REMOTE_WRITE, 1), UAF_OK);
@@ -85,6 +101,25 @@ int main(void)
     CHECK_EQ_I(uaf_key_validate(&t, rk, 7u, 0x100000u, 8u,
                                 UAF_MR_REMOTE_WRITE, 1), UAF_ERR_RKEY);
     CHECK_EQ_I(uaf_key_deregister(&t, rk), UAF_ERR_RKEY);
+
+    CASE("without a link authenticator, throttling is per source address");
+    /* [R-11.2-002] permits a trusted fabric to run with no authenticator, in
+     * which case [R-11.2-004]'s counter never advances and the 32-bit key space
+     * is scannable in seconds again. */
+    {
+        struct uaf_src_throttle st;
+        uaf_src_reset(&st);
+        uint8_t a1[16] = {0}, a2[16] = {0};
+        a1[15] = 1u; a2[15] = 2u;
+        for (unsigned i = 0; i < UAF_RKEY_FAIL_MAX; i++)
+            uaf_src_note_failure(&st, a1);
+        CHECK(uaf_src_should_throttle(&st, a1));
+        CHECK(!uaf_src_should_throttle(&st, a2));   /* other peers unaffected */
+        uaf_src_note_failure(&st, a2);
+        CHECK(!uaf_src_should_throttle(&st, a2));
+        uaf_src_reset(&st);
+        CHECK(!uaf_src_should_throttle(&st, a1));
+    }
 
     uaf_key_table_fini(&t);
     TEST_MAIN_END("test_rkey");

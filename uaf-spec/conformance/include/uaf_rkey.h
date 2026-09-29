@@ -11,7 +11,12 @@
  * [R-11.2-002] lkey and rkey MUST be distinct values.
  * [R-11.2-003] An rkey is bound to (domain, queue pair, base, length) and to
  *              a generation. A request presenting a valid rkey on a QP it was
- *              not issued for MUST fail with UAF_ERR_RKEY.
+ *              not issued for MUST fail with UAF_ERR_RKEY. The queue-pair
+ *              component is installed at CONNECT time by uaf_key_bind_qp(): a
+ *              queue pair does not exist when memory is registered, and an
+ *              unbound rkey MUST NOT validate. v2.1.1's informative samples
+ *              registered with qp_num 0 and never bound, so the requirement
+ *              described a state nothing reached.
  * [R-11.2-004] After UAF_RKEY_FAIL_MAX consecutive failures -- counted only
  *              for packets that passed the link authenticator -- the responder
  *              MUST throttle validation on that QP to one attempt per
@@ -52,6 +57,10 @@ int  uaf_key_register(struct uaf_key_table *t, uint64_t base, uint64_t length,
                       uint32_t *rkey);
 int  uaf_key_deregister(struct uaf_key_table *t, uint32_t rkey);
 
+/* Installs the queue-pair component of the binding. Called from uaf_connect().
+ * qp_num MUST be non-zero. */
+int  uaf_key_bind_qp(struct uaf_key_table *t, uint32_t rkey, uint32_t qp_num);
+
 /* Validates rkey for [va, va+len) with `want` access from qp_num.
  * `authenticated` states whether the packet passed the link authenticator;
  * only an authenticated failure may advance the counter, so an off-path
@@ -64,5 +73,21 @@ int  uaf_key_validate(struct uaf_key_table *t, uint32_t rkey, uint32_t qp_num,
  * change queue-pair state. */
 int  uaf_key_should_throttle(const struct uaf_key_table *t);
 void uaf_key_reset_failures(struct uaf_key_table *t);
+
+/* [R-11.2-008] Where no link authenticator is configured -- permitted on a
+ * trusted fabric by [R-11.1-002] -- an rkey failure cannot be attributed to an
+ * authenticated peer, so [R-11.2-004]'s counter never advances and the 32-bit
+ * key space is scannable again in seconds. A responder in that configuration
+ * SHALL throttle per SOURCE ADDRESS instead. Queue-pair state is still never
+ * changed, so the off-path kill stays closed. */
+#define UAF_SRC_THROTTLE_SLOTS 16
+struct uaf_src_throttle {
+    struct { uint8_t addr[16]; uint32_t fails; uint8_t used; } slot[UAF_SRC_THROTTLE_SLOTS];
+    uint32_t next;
+};
+void uaf_src_note_failure(struct uaf_src_throttle *st, const uint8_t addr[16]);
+int  uaf_src_should_throttle(const struct uaf_src_throttle *st,
+                             const uint8_t addr[16]);
+void uaf_src_reset(struct uaf_src_throttle *st);
 
 #endif
